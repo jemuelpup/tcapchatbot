@@ -1,0 +1,50 @@
+@import '../../../assets/scss/variables.scss';
+@import '../../../assets/scss/functions.scss';
+
+.chat-area{
+	background-color: #f9f9f9;
+	border: 1px solid #ced4da;
+	border-radius: 0.25rem;
+	height: 15rem;
+	padding: 0.5rem 1rem;
+	overflow-y: scroll;
+}
+
+
+.keywordsarea p span{
+	position: relative;
+	cursor: pointer;
+	background-color: $color-primary;
+	padding: 0.5rem;
+	display: inline-block;
+	margin: 0 0.75rem 0.5rem 0;
+	color: #fff;
+	@include border-radius(0.5rem);
+	&:after{
+		content:"x";
+		background-color: #de2b2b;
+		position: absolute;
+		right: 0;
+		top: 0;
+		text-align: center;
+		line-height: 1;
+		width: 20px;
+		height: 20px;
+		opacity: 0;
+		@include border-radius(100%);
+		@include transform(translate(50%,-50%));
+		@include transition(opacity 200ms ease);
+	}
+	&:hover{
+		&:after{
+			opacity: 1;
+		}
+	}
+}
+app-message:hover{
+	cursor: pointer;
+}
+.chat-training-data .btn{
+	display: block;
+	margin-bottom: 1rem;
+}

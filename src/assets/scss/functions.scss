@@ -1,0 +1,49 @@
+@import './variables.scss';
+
+@mixin colorPrimaryTheme(){
+	background-color: $color-primary;
+	color: #fff;
+}
+
+@mixin colorSecondaryTheme(){
+	background-color: $color-secondary;
+	color: #000;
+}
+
+@mixin border-radius($p){
+	-webkit-border-radius: $p;
+	border-radius: $p;
+}
+
+@mixin box-shadow($p){
+	-webkit-box-shadow: $p;
+	box-shadow: $p;
+}
+
+@mixin box-sizing($p){
+	-moz-box-sizing: $p;
+	-webkit-box-sizing: $p;
+	box-sizing: $p;
+}
+
+@mixin transition($p){
+	-webkit-transition: $p;
+	-moz-transition: $p;
+	-ms-transition: $p;
+	-o-transition: $p;
+	transition: $p;
+}
+
+@mixin transform($p){
+	-moz-transform: $p;
+	-webkit-transform: $p;
+	-o-transform: $p;
+	-ms-transform: $p;
+	transform: $p;
+}
+
+@mixin box-shadow($p){
+	-webkit-box-shadow: $p;
+	-moz-box-shadow: $p;
+	box-shadow: $p;
+}

@@ -1,0 +1,10 @@
+@import '../../../assets/scss/variables.scss';
+@import '../../../assets/scss/functions.scss';
+
+footer{
+	background-color: $color-primary;
+	color: #fff;
+	p{
+		margin-bottom: 0;
+	}
+}

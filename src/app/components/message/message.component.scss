@@ -1,0 +1,29 @@
+@import '../../../assets/scss/variables.scss';
+@import '../../../assets/scss/functions.scss';
+
+
+.message{
+	text-align: right;
+	&.chatbot{
+		text-align: left;
+		p{
+			color: #fff;
+			background-color: $color-primary-light;
+		}
+	}
+	p{
+		font-size: 0.85rem;
+		background-color: #fff;
+		display: inline-block;
+		padding: 0.25rem 1rem;
+		max-width: 90%;
+		margin-bottom: 1rem;
+		text-align: left;
+		@include border-radius(1rem);
+		@include box-shadow($depth-1);
+	}
+	.input-group .simulate .btn{
+	    border-top-left-radius: 0!important;
+	    border-bottom-left-radius: 0!important;
+	}
+}

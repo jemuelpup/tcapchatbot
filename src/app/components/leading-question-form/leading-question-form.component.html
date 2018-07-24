@@ -1,0 +1,32 @@
+<div class="row">
+	<div class="col-md-12">
+		<p><strong>Main question:</strong> {{mainQuestion}}</p>
+	</div>
+	<div class="col-md-5">
+		<div class="form-group">
+			<label for="degree-of-importance"><strong>Degree of importance(1-10)</strong></label>
+			<input class="form-control" type="number" id="degree-of-importance" min="1" max="5" value=5>
+		</div>
+		<div class="form-group">
+			<label for="chatbot-question"><strong>Chatbot Reserved Question</strong></label>
+			<textarea name="chat" class="form-control" id="chatbot-question" cols="30" rows="10"></textarea>
+		</div>
+	</div>
+	<div class="col-md-7">
+		<div class="form-group">
+			<label for="addedKeyword"><strong>Added keyword</strong></label>
+			<input class="form-control" type="text" id="addedKeyword">
+		</div>
+		<div class="form-group">
+			<label><strong>Choices</strong></label>
+			<div class="input-group choice" *ngFor="let choice of choices; let i = index">
+				<input type="text" [(ngModel)]="choices[i].text" name="name{{i}}" class="form-control" #name="ngModel" required placeholder="Choice" />
+				<div class="simulate">
+					<button type="submit" class="btn btn-primary">Proceed</button>
+					<button type="button" class="btn btn-danger" (click)="removeChoice(i)">Remove</button>
+				</div>
+			</div>
+			<button type="button" class="btn btn-primary" (click)="addChoice()">Add choice</button>
+		</div>
+	</div>
+</div>

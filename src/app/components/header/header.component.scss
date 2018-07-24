@@ -1,0 +1,15 @@
+@import '../../../assets/scss/variables.scss';
+@import '../../../assets/scss/functions.scss';
+
+header{
+	display: flex;
+	align-items: center;
+	background-color: $color-primary;
+	color: #fff;
+	margin-bottom: 2rem;
+	height: 4rem;
+
+	p{
+		margin-bottom: 0;
+	}
+}

@@ -1,1 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "~font-awesome/css/font-awesome.css";
+@import './assets/scss/variables.scss';
+@import './assets/scss/functions.scss';
+
+.line-separator{
+	padding-bottom: 2rem;
+	border-bottom: 1px solid #d43c3c;
+	margin-bottom: 2rem;
+}
+
+.mr0_5rem{
+	margin-right: 0.5rem;
+}
