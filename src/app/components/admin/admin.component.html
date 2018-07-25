@@ -12,6 +12,12 @@
 					(click)="getUserQuestion(m)"></app-message>
 				</div>
 			</div>
+			<div class="related-questions">
+				<p><strong>Related Questions</strong></p>
+				<ul class="related-questions-list">
+					<li *ngFor="let q of relatedQuestions" (click)="getRelatedQuestionData(q)">{{q.question}}</li>
+				</ul>
+			</div>
 			<div class="leading-questions">
 				<p><strong>Leading Questions</strong></p>
 				<ul class="leding-questions-list">
@@ -21,7 +27,6 @@
 		</div>
 		<div class="col-md-6">
 			<div class="chat-training-data">
-				
 					<div class="row">
 						<div class="col-md-12">
 							<form #questionForm="ngForm" (ngSubmit)="saveQuestion(userQuestion,questionSubject,questionKeywords)">
@@ -54,7 +59,7 @@
 							    <input type="email" class="form-control" id="answer" aria-describedby="emailHelp" placeholder="Answer" required>
 							    <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
 							  </div>
-								<button type="submit" class="btn btn-success" [disabled]="!answerFrom.valid">Answer</button>
+								<button type="submit" class="btn btn-success" [disabled]="allowAnswerGeneration">Set Answer</button>
 							</form>
 
 							

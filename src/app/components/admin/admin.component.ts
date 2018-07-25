@@ -15,7 +15,9 @@ export class AdminComponent implements OnInit {
 	messages: Message[];
 	questionSubject: string;
   questionKeywords: {}[];
+  relatedQuestions: {}[];
   mainQuestion: string;
+  allowAnswerGeneration: boolean;
 
   //input
   keyword: string;
@@ -34,13 +36,34 @@ export class AdminComponent implements OnInit {
   	this.questionSubject = "";
   	this.messages = [];
     this.questionKeywords = [];
+    this.relatedQuestions = [];
     this.keyword = "";
     this.mainQuestion = "";
+    this.allowAnswerGeneration = false;
 		// initialization
   	this.testSimulation();
     // testing
     // this.getUserQuestion({message:"What is the best lens for portrait for nikon dlsr to be used indoor without external flash can be used in groupshots with a budget of $200-$300?"});
-    
+  }
+  // this function sets the user question, subject and keywords
+  getRelatedQuestionData(q){
+  	console.log(q);
+  	this.bs.processData("getQuestionSubjectAndKeywords",{
+    	questionId: q.id
+    }).subscribe(r=>{
+    	this.userQuestion = q.question
+    	this.questionSubject = r.subject_text
+    	this.questionKeywords = r.keywords.map(keyword=>keyword.keyword);
+    	console.log(r);
+    });
+  }
+
+  getRelatedQuestions(kw){//keywords
+  	this.bs.processData("getRelatedQuestions",{
+    	questionKeywords: kw
+    }).subscribe(r=>{
+    	this.relatedQuestions = r;
+    });
   }
 
 
@@ -59,9 +82,11 @@ export class AdminComponent implements OnInit {
   getWords(q: string): string[]{
     return q.match(/(\$|\b)\w+/mgi);// match all words and numbers or $num
   }
+  // triggers when the question in the chatbox was clicked
   getUserQuestion(userQuestion){
     this.questionKeywords = this.getWords(userQuestion.message);
     this.userQuestion = userQuestion.message;
+    this.getRelatedQuestions(this.questionKeywords);
   }
   removeKeyword(kwIndex){
     this.questionKeywords.splice(kwIndex,1);
@@ -80,6 +105,8 @@ export class AdminComponent implements OnInit {
   testSimulation(){
 
     let conversation = [
+    	"Portrait lens",
+    	"What do you mean?",
       "What is the best lens for portrait?",
       "There are many lenses depends on the brand of your camera. What is the brand of your DSLR?",
       "Nikon",

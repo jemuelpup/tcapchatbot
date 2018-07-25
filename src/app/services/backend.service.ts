@@ -20,7 +20,6 @@ export class BackendService {
 
 
   processData(process: string,data: {}): Observable<any>{
-  	console.log("dumaan dito");
   	return this.http.post(this.phpUrl,{
   		process: process,
   		data: data
