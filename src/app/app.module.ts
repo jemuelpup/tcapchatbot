@@ -10,6 +10,7 @@ import { MessageComponent } from './components/message/message.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { ChatbotComponent } from './components/chatbot/chatbot.component';
 import { LeadingQuestionFormComponent } from './components/leading-question-form/leading-question-form.component';
+import { ChatboxComponent } from './components/chatbox/chatbox.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { LeadingQuestionFormComponent } from './components/leading-question-form
     MessageComponent,
     AdminComponent,
     ChatbotComponent,
-    LeadingQuestionFormComponent
+    LeadingQuestionFormComponent,
+    ChatboxComponent
   ],
   imports: [
     BrowserModule,

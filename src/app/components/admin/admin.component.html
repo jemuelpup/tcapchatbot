@@ -3,19 +3,20 @@
 	<p>Simulation</p>
 	<div class="row line-separator">
 		<div class="col-md-6">
-			<div class="form-group">
-				<label><strong>Conversation</strong></label>
-				<div class="chat-area" #scrollToBottom [scrollTop]="scrollToBottom.scrollHeight">
-					<app-message 
-					*ngFor="let m of messages" 
-					[message]="m"
-					(click)="getUserQuestion(m)"></app-message>
-				</div>
-			</div>
+			<label><strong>Conversation</strong></label>
+			<app-chatbox>
+				<app-message *ngFor="let m of messages" [message]="m" (click)="getUserQuestion(m.message)"></app-message>
+			</app-chatbox>
 			<div class="related-questions">
 				<p><strong>Related Questions</strong></p>
 				<ul class="related-questions-list">
 					<li *ngFor="let q of relatedQuestions" (click)="getRelatedQuestionData(q)">{{q.question}}</li>
+				</ul>
+			</div>
+			<div class="related-subjects">
+				<p><strong>Related Subject</strong></p>
+				<ul class="related-subjects-list">
+					<li *ngFor="let s of relatedSubjects" (click)="questionSubject=s.subject">{{s.subject}}</li>
 				</ul>
 			</div>
 			<div class="leading-questions">
@@ -32,11 +33,25 @@
 							<form #questionForm="ngForm" (ngSubmit)="saveQuestion(userQuestion,questionSubject,questionKeywords)">
 								<div class="form-group">
 								  <label for="topic"><strong>User question</strong></label>
-								  <input class="form-control" [(ngModel)]="userQuestion" type="text" name="userQuestion" id="userQuestions">
+								  <input 
+								  #questionInput 
+								  class="form-control" 
+								  [(ngModel)]="userQuestion" 
+								  type="text" 
+								  name="userQuestion" 
+								  id="userQuestions"
+								  required>
 								</div>
 								<div class="form-group">
 								  <label for="subject"><strong>Subject</strong></label>
-								  <input class="form-control" [(ngModel)]="questionSubject" type="text" name="subject" id="subject" required>
+								  <input 
+								  #subjectInput 
+								  class="form-control" 
+								  [(ngModel)]="questionSubject" 
+								  type="text" 
+								  name="questionSubject" 
+								  id="questionSubject"
+								  required>
 								</div>
 								<div class="keywordsarea">
 									<p><strong class="mr0_5rem">Keywords:</strong> <span
@@ -53,13 +68,17 @@
 								</div>
 								<button type="submit" class="btn btn-primary" [disabled]="!questionForm.valid">Save Question</button>
 							</form>
-							<form #answerFrom="ngForm" (ngSubmit)="saveAnswer()">
+							<form #answerFrom="ngForm" (ngSubmit)="saveAnswer(questionAnswer)">
 								<div class="form-group">
 							    <label for="answer"><strong>Answer</strong></label>
-							    <input type="email" class="form-control" id="answer" aria-describedby="emailHelp" placeholder="Answer" required>
-							    <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+							    <input type="email" 
+							    class="form-control"
+							    [(ngModel)]="questionAnswer" 
+							    name="answer" 
+							    placeholder="Answer"
+							    required>
 							  </div>
-								<button type="submit" class="btn btn-success" [disabled]="allowAnswerGeneration">Set Answer</button>
+								<button type="submit" class="btn btn-success" [disabled]="!answerFrom.valid">Set Answer</button>
 							</form>
 
 							

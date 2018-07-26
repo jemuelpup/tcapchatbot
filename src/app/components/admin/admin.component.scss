@@ -1,14 +1,7 @@
 @import '../../../assets/scss/variables.scss';
 @import '../../../assets/scss/functions.scss';
 
-.chat-area{
-	background-color: #f9f9f9;
-	border: 1px solid #ced4da;
-	border-radius: 0.25rem;
-	height: 15rem;
-	padding: 0.5rem 1rem;
-	overflow-y: scroll;
-}
+
 
 
 .keywordsarea p span{
@@ -48,7 +41,7 @@ app-message:hover{
 	display: block;
 	margin-bottom: 1rem;
 }
-
+.related-subjects-list,
 .related-questions-list{
 	color: $color-primary;
 	opacity: 0.7;
