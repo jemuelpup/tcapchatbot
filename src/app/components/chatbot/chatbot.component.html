@@ -1,3 +1,32 @@
-<p>
-  chatbot works!
-</p>
+<div class="col-md-6">
+	<div class="chatbot">
+		<label><strong>Chatbot Conversation</strong></label>
+		<app-chatbox>
+			<app-message
+			*ngFor="let m of messages"
+			[message]="m">
+				<ul 
+				class="choices"
+				*ngIf="m.choices?.length">
+					<li *ngFor="let c of m.choices" (click)="selectInChoice(c)">{{c.question}}</li>
+				</ul>
+			</app-message>
+		</app-chatbox>
+		<div class="input-group mb-3">
+		  <input 
+		  (keyup.enter)="talkToChatbot(testing.value);testing.value=''" 
+		  type="text" 
+		  class="form-control" 
+		  [(ngModel)]="userQuery"
+		  #testing
+		  placeholder="message" 
+		  aria-label="message" 
+		  aria-describedby="basic-addon2">
+		  <div 
+		  class="input-group-append" 
+		  (click)="talkToChatbot(testing.value);testing.value=''">
+		    <span class="input-group-text" id="basic-addon2">send</span>
+		  </div>
+		</div>
+	</div>
+</div>

@@ -1,95 +1,91 @@
-<h1>Chatbot</h1>
 <div class="admin">
-	<p>Simulation</p>
+	<app-saved-leading-question></app-saved-leading-question>
 	<div class="row line-separator">
-		<div class="col-md-6">
+		<div class="col-md-5">
 			<label><strong>Conversation</strong></label>
 			<app-chatbox>
 				<app-message *ngFor="let m of messages" [message]="m" (click)="getUserQuestion(m.message)"></app-message>
 			</app-chatbox>
+			<div class="chat-training-data">
+				<div class="row">
+					<div class="col-md-12">
+						<form #questionForm="ngForm" (ngSubmit)="saveQuestion(userQuestion,questionSubject,questionKeywords)">
+							<div class="form-group">
+								<label for="topic"><strong>User question</strong></label>
+								<input #questionInput class="form-control" [(ngModel)]="userQuestion" type="text" name="userQuestion" id="userQuestions" required>
+							</div>
+							<div class="form-group">
+								<label for="subject"><strong>Subject</strong></label>
+								<input #subjectInput class="form-control" [(ngModel)]="questionSubject" type="text" name="questionSubject" id="questionSubject" required>
+							</div>
+							<div class="keywordsarea">
+								<p><strong class="mr0_5rem">Keywords:</strong> <span (click)="removeKeyword(i)" *ngFor="let kw of questionKeywords index as i">{{kw}}</span></p>
+							</div>
+							<div class="input-group mb-1">
+								<div class="form-group">
+									<input class="form-control" [(ngModel)]="keyword" type="text" name="keyword" id="keywords" placeholder="keywords">
+								</div>
+								<div class="input-group-append">
+									<button type="button" class="btn btn-primary" (click)="addKeyword(keyword);">Add Keyword</button>
+								</div>
+							</div>
+							<button type="submit" class="btn btn-primary" [disabled]="!questionForm.valid">Save Question</button>
+						</form>
+						<form #answerFrom="ngForm" (ngSubmit)="saveAnswer(questionAnswer)">
+							<div class="form-group">
+								<label for="answer"><strong>Answer</strong></label>
+								<input type="email" class="form-control" [(ngModel)]="questionAnswer" name="answer" placeholder="Answer" required>
+							</div>
+							<button type="submit" class="btn btn-success" [disabled]="!answerFrom.valid">Set Answer</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="leading-question-list-container">
+				<p><strong>Leading Questions</strong></p>
+				<button
+				class="paste button-icon-style"
+				tooltip="Paste copied leading question"
+				placement="auto"
+				(click)="pasteLeadingQuestionAndChoices()">
+					<fa-icon icon="paste"></fa-icon>
+				</button>
+				<ul class="leading-questions-list">
+					<li *ngFor="let l of leadingQuestions" (click)="getLeadingQuestionData(l)">{{l.leading_question}}</li>
+				</ul>
+			</div>
+			<div class="add-leading-question-form">
+				<form [formGroup]="leadingQuestionForm" (ngSubmit)="addLeadingQuestion(leadingQuestionForm)">
+					<div class="form-group">
+						<label><strong>Degree of importance</strong></label>
+						<input type="number" [value]=5 class="form-control" formControlName="degreeOfImportance" name="degreeOfImportance" placeholder="Degree of importance">
+					</div>
+					<div class="form-group">
+						<label><strong>Leading question</strong></label>
+						<input type="text" class="form-control" formControlName="leadingQuestion" name="leadingQuestion" placeholder="Leading question">
+					</div>
+					<button type="submit" class="btn btn-info" [disabled]="!leadingQuestionForm.valid">Add Leading Question</button>
+				</form>
+			</div>
+		</div>
+		<div class="col-md-2">
 			<div class="related-questions">
 				<p><strong>Related Questions</strong></p>
 				<ul class="related-questions-list">
 					<li *ngFor="let q of relatedQuestions" (click)="getRelatedQuestionData(q)">{{q.question}}</li>
 				</ul>
 			</div>
+		</div>
+		<div class="col-md-2">
 			<div class="related-subjects">
 				<p><strong>Related Subject</strong></p>
 				<ul class="related-subjects-list">
 					<li *ngFor="let s of relatedSubjects" (click)="questionSubject=s.subject">{{s.subject}}</li>
 				</ul>
 			</div>
-			<div class="leading-questions">
-				<p><strong>Leading Questions</strong></p>
-				<ul class="leding-questions-list">
-					<li></li>
-				</ul>
-			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="chat-training-data">
-					<div class="row">
-						<div class="col-md-12">
-							<form #questionForm="ngForm" (ngSubmit)="saveQuestion(userQuestion,questionSubject,questionKeywords)">
-								<div class="form-group">
-								  <label for="topic"><strong>User question</strong></label>
-								  <input 
-								  #questionInput 
-								  class="form-control" 
-								  [(ngModel)]="userQuestion" 
-								  type="text" 
-								  name="userQuestion" 
-								  id="userQuestions"
-								  required>
-								</div>
-								<div class="form-group">
-								  <label for="subject"><strong>Subject</strong></label>
-								  <input 
-								  #subjectInput 
-								  class="form-control" 
-								  [(ngModel)]="questionSubject" 
-								  type="text" 
-								  name="questionSubject" 
-								  id="questionSubject"
-								  required>
-								</div>
-								<div class="keywordsarea">
-									<p><strong class="mr0_5rem">Keywords:</strong> <span
-										(click)="removeKeyword(i)"
-										*ngFor="let kw of questionKeywords index as i">{{kw}}</span></p>
-								</div>
-								<div class="input-group mb-1">
-	  							<div class="form-group">
-									  <input class="form-control" [(ngModel)]="keyword" type="text" name="keyword" id="keywords" placeholder="keywords">
-									</div>
-								  <div class="input-group-append">
-								    <button type="button" class="btn btn-primary" (click)="addKeyword(keyword);">Add Keyword</button>
-								  </div>
-								</div>
-								<button type="submit" class="btn btn-primary" [disabled]="!questionForm.valid">Save Question</button>
-							</form>
-							<form #answerFrom="ngForm" (ngSubmit)="saveAnswer(questionAnswer)">
-								<div class="form-group">
-							    <label for="answer"><strong>Answer</strong></label>
-							    <input type="email" 
-							    class="form-control"
-							    [(ngModel)]="questionAnswer" 
-							    name="answer" 
-							    placeholder="Answer"
-							    required>
-							  </div>
-								<button type="submit" class="btn btn-success" [disabled]="!answerFrom.valid">Set Answer</button>
-							</form>
-
-							
-							<button type="button" class="btn btn-info" (click)="addLeadingQuestion()">Add Leading Question</button>
-
-							
-						</div>
-					</div>
-			</div>
 		</div>
 	</div>
-	<app-leading-question-form></app-leading-question-form>
+	<!-- <app-leading-question-form></app-leading-question-form> -->
 </div>
-

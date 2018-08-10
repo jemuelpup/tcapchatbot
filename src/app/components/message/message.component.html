@@ -1,3 +1,6 @@
 <div class="message" [ngClass]="{'chatbot':'chatbot'==m.sender}">
-	<p>{{m.message}}</p>
+	<div class="message-content">
+		<p>{{m.message}}</p>
+		<ng-content></ng-content>
+	</div>
 </div>

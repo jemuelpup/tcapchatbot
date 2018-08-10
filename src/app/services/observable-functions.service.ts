@@ -12,10 +12,10 @@ export class ObservableFunctionsService {
 
 	setInputTextDebounce(componentView){
 		return fromEvent(componentView, 'input')
-    .pipe(
-       debounceTime(1000),
-       map((e: KeyboardEvent) => e.target['value'])
-    );
+	    .pipe(
+	       debounceTime(1000),
+	       map((e: KeyboardEvent) => e.target['value'])
+	    );
 	}
 
 }

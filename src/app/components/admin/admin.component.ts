@@ -1,11 +1,20 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Message } from '../../models/message';
 import { Question } from '../../models/question';
-import { BackendService } from '../../services/backend.service';
-import { ObservableFunctionsService } from '../../services/observable-functions.service';
 
 import { Observable } from "rxjs";
 
+import { LeadingQuestionFormComponent } from "../../components/admin/leading-question-form/leading-question-form.component";
+
+import { BackendService } from '../../services/backend.service';
+import { ObservableFunctionsService } from '../../services/observable-functions.service';
+import { AdminService } from '../../services/admin.service';
+import { CommonFunctionsService } from '../../services/common-functions.service';
+
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { combineLatest, Subscription } from 'rxjs';
 
 
 
@@ -18,25 +27,38 @@ export class AdminComponent implements OnInit {
 	@ViewChild('questionInput') questionInput: ElementRef;
 	@ViewChild('subjectInput') subjectInput: ElementRef;
 	public input$: Observable<string>;
-
+  subscriptions: Subscription[] = [];
+  modalRef: BsModalRef;
   question: Question;
 	messages: Message[];
 	questionSubject: string;
   questionKeywords: {}[];
   relatedQuestions: {}[];
+  relatedQuestion: {};
   relatedSubjects: {}[];
   mainQuestion: string;
   allowAnswerGeneration: boolean;
   keyword: string;
   userQuestion: string;
+  questionAnswer: string;
   generatedQuestionData: {};
+  degreeOfImportance: number;
+  leadingQuestions: {}[];
+  closeResult: string;
+  leadingQuestion: string = "question";
+  leadingQuestionChoices: LeadingQuestionChoices[] = [];
+  leadingQuestionForm;
 
   constructor(
     public bs: BackendService,
-    public o: ObservableFunctionsService
+    public o: ObservableFunctionsService,
+    public cf: CommonFunctionsService,
+    public formB: FormBuilder,
+    public adminService: AdminService,
+    private modalService: BsModalService,
+    private changeDetection: ChangeDetectorRef
   ) {
   }
-
   ngOnInit() {
   	// initialization
     this.userQuestion = "";
@@ -47,41 +69,93 @@ export class AdminComponent implements OnInit {
     this.relatedSubjects = [];
     this.keyword = "";
     this.mainQuestion = "";
+    this.questionAnswer = ""
     this.allowAnswerGeneration = false;
-
+    this.degreeOfImportance = 5;
+    this.leadingQuestions = [];
+    // question form
+    this.initializeForms();
 		// initialization
   	this.testSimulation();
-    // testing
+    /* <testing> */
+    this.getRelatedQuestionData({id:1,question:"lens for portrait"});
+    /* </testing> */
     // this.getUserQuestion({message:"What is the best lens for portrait for nikon dlsr to be used indoor without external flash can be used in groupshots with a budget of $200-$300?"});
   }
   ngAfterViewInit() {
     this.o.setInputTextDebounce(this.questionInput.nativeElement)
     .subscribe((val: string) => {
       if(this.userQuestion!=="")
-    		this.getUserQuestion(this.userQuestion);
+        this.getUserQuestion(this.userQuestion);
     });
     this.o.setInputTextDebounce(this.subjectInput.nativeElement)
     .subscribe((val: string) => {
       if(this.questionSubject!=="")
-    		this.getRelatedSubjects(this.questionSubject);
+        this.getRelatedSubjects(this.questionSubject);
     });
-	}
+  }
+/* function for modal */
+  getLeadingQuestionData(lq){
+    this.leadingQuestion = lq;
+    this.leadingQuestionChoices = lq.choices;
+    this.modalRef = this.modalService.show( LeadingQuestionFormComponent, {
+      initialState: {
+        leadingQuestion: lq,
+        question: this.question,
+        changed: false
+      }
+    });
+    const _combine = combineLatest(
+      this.modalService.onHide
+    ).subscribe(() => this.changeDetection.markForCheck());
 
+    this.subscriptions.push(_combine);
+    this.subscriptions.push(
+      this.modalService.onHide.subscribe((reason: string) => {
+        this.unsubscribe();
+        if(this.modalRef.content.changed){
+          this.getRelatedQuestionData(this.relatedQuestion);
+        }
+      })
+    ); 
+  }
+  unsubscribe() {
+    this.subscriptions.forEach((subscription: Subscription) => {
+      subscription.unsubscribe();
+    });
+    this.subscriptions = [];
+  }
+/* </function for modal> */
+  initializeForms(){
+  	this.leadingQuestionForm = this.formB.group({
+    	degreeOfImportance: [5,[
+    		Validators.required,
+    		Validators.minLength(2),
+    		Validators.min(1),
+    		Validators.max(10),
+    	]],
+    	leadingQuestion: ['',[
+    		Validators.required
+    	]]
+    });
+  }
   // this function sets the user question, subject and keywords
   getRelatedQuestionData(q){
-  	
-  	this.bs.processData("getQuestionSubjectAndKeywords",{
+    this.relatedQuestion = q;
+  	this.bs.processData("getQuestionDetails",{
     	questionId: q.id
     }).subscribe(r=>{
-    	console.log(q)
-    	console.log(r)
+    	// console.log(r)
     	this.question = new Question(
+        // nandito yung mali.
     		q.id,q.question,r.subject_id,r.subject,r.keywords
     	);
-    	this.userQuestion = q.question
-    	this.questionSubject = r.subject
+    	this.userQuestion = q.question;
+    	this.questionSubject = r.subject;
+      this.questionAnswer = r.conclusion;
     	this.questionKeywords = r.keywords.map(keyword=>keyword.keyword);
     	this.allowAnswerGeneration = true;
+    	this.leadingQuestions = r.leading_questions ? r.leading_questions : [];
     });
   }
   getRelatedSubjects(s){
@@ -90,13 +164,6 @@ export class AdminComponent implements OnInit {
     }).subscribe(r=>{
     	this.relatedSubjects = r;
     	// console.log(r);
-    });
-  }
-  getRelatedQuestions(kw){//keywords
-  	this.bs.processData("getRelatedQuestions",{
-    	questionKeywords: kw
-    }).subscribe(r=>{
-    	this.relatedQuestions = r;
     });
   }
   // question, subject, questionKeywords
@@ -109,14 +176,14 @@ export class AdminComponent implements OnInit {
     	this.allowAnswerGeneration = true;
     });
   }
-  /* gets the question and returns the array of string
-  	 match all words and numbers or $num */
-  getWords(q: string): string[]{ return q.match(/(\$|\b)\w+/mgi); }
   // triggers when the question in the chatbox was clicked
   getUserQuestion(userQuestion){
-    this.questionKeywords = this.getWords(userQuestion);
     this.userQuestion = userQuestion;
-    this.getRelatedQuestions(this.questionKeywords);
+    this.questionKeywords = this.cf.getWords(userQuestion);
+    this.cf.getRelatedQuestions(this.questionKeywords)
+      .subscribe(r=>{
+        this.relatedQuestions = r;
+      })
   }
   // remove an element in keyword array
   removeKeyword(kwIndex){
@@ -133,7 +200,6 @@ export class AdminComponent implements OnInit {
   }
   // static chat data. For testing purposes only
   testSimulation(){
-
     let conversation = [
     	"Portrait lens",
     	"What do you mean?",
@@ -168,7 +234,7 @@ export class AdminComponent implements OnInit {
 
 	  	this.bs.processData("insertAnswerToQuestion",{
 	    	questionDetails:this.question,
-	    	answer: "jemuel"
+	    	answer: ans
 	    }).subscribe(r=>{
 	    	console.log(r);
 	    });
@@ -180,5 +246,31 @@ export class AdminComponent implements OnInit {
   	// console.log(this.question);
   	// console.log(this.question);
   }
+  /* Creating leading questions */
+  addLeadingQuestion(leadingQuestion){
+    if(this.question){
+    	// console.log(this.question);
+    	console.log(leadingQuestion.value);
+      this.bs.processData("insertLeadingQuestion",{
+        questionId: this.question.question_id,
+        degreeOfImportance: leadingQuestion.value.degreeOfImportance,
+        leadingQuestion: leadingQuestion.value.leadingQuestion
+      }).subscribe(r=>{
+        console.log(r);
+        // the response should be the leading questions list
+      });
+    }
+    else{
+      console.log("select question related question first");  
+    }
+  }
+  pasteLeadingQuestionAndChoices(){
+    console.log(this.adminService.copiedLeadingQuestionQuestionAndChoice);
+  }
+}
 
+export class LeadingQuestionChoices{
+  id: number;
+  choice: string;
+  keyword: string;
 }

@@ -1,0 +1,57 @@
+@import '../../../../assets/scss/variables.scss';
+@import '../../../../assets/scss/functions.scss';
+.leading-question-container{
+	position: fixed;
+	top: 75px;
+	left: 20px;
+	width: 400px;
+    z-index: 1;
+}
+.leading-questions{
+	background-color: #f7f7f7;
+    padding: 5px 10px;
+	@include box-shadow($depth-1);
+	p,
+	li{
+		font-size: 12px;
+		margin-bottom: 0;
+	}
+	.question-data{
+		position: relative;
+		background-color: #fff;
+    	padding: 5px 10px;
+    	margin-bottom: 6px;
+    	&:last-child{
+    		margin-bottom: 0;
+    	}
+	}
+	&>ul{
+		margin-bottom: 0;
+	}
+}
+
+.copyBoth{
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+.remove{
+	position: absolute;
+	right: 0;
+	bottom: 5px;
+}
+.choice-container{
+	padding-right: 15px;
+}
+.choices{
+	display: flex;
+	justify-content: flex-start;
+	li{
+		background-color: $color-primary-light;
+		color: #fff;
+		padding: 4px 8px;
+		@include border-radius(5px);
+		margin-right: 4px;
+
+	}
+}

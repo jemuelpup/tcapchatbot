@@ -1,5 +1,5 @@
 export class Message{
-	message: string;
+	message: any;
 	sender: string;// chatbot or user
 	senderImg: string;
 }

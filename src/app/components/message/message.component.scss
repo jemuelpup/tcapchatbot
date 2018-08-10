@@ -6,12 +6,12 @@
 	text-align: right;
 	&.chatbot{
 		text-align: left;
-		p{
+		.message-content{
 			color: #fff;
 			background-color: $color-primary-light;
 		}
 	}
-	p{
+	.message-content{
 		font-size: 0.85rem;
 		background-color: #fff;
 		display: inline-block;
@@ -21,6 +21,9 @@
 		text-align: left;
 		@include border-radius(1rem);
 		@include box-shadow($depth-1);
+		p{
+			margin-bottom: 0;
+		}
 	}
 	.input-group .simulate .btn{
 	    border-top-left-radius: 0!important;

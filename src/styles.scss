@@ -3,7 +3,12 @@
 @import "~font-awesome/css/font-awesome.css";
 @import './assets/scss/variables.scss';
 @import './assets/scss/functions.scss';
+@import '~ngx-toastr/toastr.css';
 
+ol, ul {
+	list-style: none;
+	padding-left: 0;
+}
 .line-separator{
 	padding-bottom: 2rem;
 	border-bottom: 1px solid #d43c3c;
@@ -12,4 +17,14 @@
 
 .mr0_5rem{
 	margin-right: 0.5rem;
+}
+.mb0{
+	margin-bottom: 0!important;
+}
+.button-icon-style{
+	background-color: transparent;
+	border: 0;
+	&:hover{
+		cursor: pointer;
+	}
 }

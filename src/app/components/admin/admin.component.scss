@@ -1,9 +1,6 @@
 @import '../../../assets/scss/variables.scss';
 @import '../../../assets/scss/functions.scss';
 
-
-
-
 .keywordsarea p span{
 	position: relative;
 	cursor: pointer;
@@ -41,12 +38,23 @@ app-message:hover{
 	display: block;
 	margin-bottom: 1rem;
 }
+.leading-questions-list,
 .related-subjects-list,
 .related-questions-list{
-	color: $color-primary;
-	opacity: 0.7;
-	&:hover{
-		opacity: 1;
-		cursor: pointer;
+	li{
+		color: $color-primary;
+			opacity: 1;
+		&:hover{
+			opacity: 0.7;
+			cursor: pointer;
+		}
+	}
+}
+.leading-question-list-container{
+	position: relative;
+	.paste{
+		position: absolute;
+		top: 0;
+		right: 0;
 	}
 }

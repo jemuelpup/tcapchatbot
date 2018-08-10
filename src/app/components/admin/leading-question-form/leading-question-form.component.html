@@ -1,0 +1,73 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">Leading question form</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form #leadingQuestionChoicesForm="ngForm" (ngSubmit)="saveChoices()">
+    <div class="form-group">
+      <label><strong>Question</strong></label>
+      <div class="btn-group float-right" dropdown>
+        <button id="more" dropdownToggle type="button" class="btn btn-primary">
+          <fa-icon icon="ellipsis-v"></fa-icon>
+        </button>
+        <ul *dropdownMenu class="dropdown-menu dropdown-menu-right"
+            role="menu" aria-labelledby="more">
+          <li 
+          role="menuitem"
+          (click) = "copyLeadingQuestion()"
+          ><p class="dropdown-item"><fa-icon icon="copy"></fa-icon>Copy leading question</p></li>
+          <li 
+          role="menuitem"
+          (click) = "pasteChoices()"
+          ><p class="dropdown-item"><fa-icon icon="paste"></fa-icon>Paste choices</p></li>
+        </ul>
+      </div>
+      <p>{{leadingQuestion.leading_question}}</p>
+      <label><strong>Choices</strong></label>
+      <div 
+      class="input-group mb-3 choices" 
+      *ngFor="let c of leadingQuestion.choices; let i = index">
+        <input 
+        type="text" 
+        class="form-control" 
+        placeholder="answer" 
+        aria-label="answer" 
+        aria-describedby="banswer" 
+        [(ngModel)]="c.choice" 
+        name="choice_{{i}}">
+        <div class="input-group-append">
+          <input 
+          type="text" 
+          class="form-control" 
+          placeholder="Keyword" 
+          aria-label="keyword" 
+          aria-describedby="keyword" 
+          [(ngModel)]="c.keyword" 
+          name="keyword{{i}}">
+        </div>
+        <div class="form-group form-check">
+          <input 
+          type="checkbox" 
+          class="form-check-input" 
+          (change)="removeChoice(c.key)">
+        </div>
+      </div>
+      <div class="doi-container">
+        <label class="mb0"><strong>Degree of importance</strong></label>
+        <input 
+        type="number" 
+        [(ngModel)]="leadingQuestion.degree_of_importance" 
+        class="form-control" 
+        name="degreeOfImportance" 
+        placeholder="Degree of importance">
+      </div>
+    </div>
+    <button type="button" class="btn" (click)="addChoice()">Add choice</button>
+    <button type="button" class="btn" (click)="deleteChoices()">Delete Selected Choices</button>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-outline-dark">Save</button>
+    </div>
+  </form>
+</div>

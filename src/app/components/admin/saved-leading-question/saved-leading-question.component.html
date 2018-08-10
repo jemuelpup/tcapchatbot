@@ -1,0 +1,52 @@
+<div class="leading-question-container">
+	<button
+	class="button-icon-style"
+	tooltip="leading question clipboard" placement="right">
+	<fa-icon icon="copy" (click)="showSavedLeadingQuestions = !showSavedLeadingQuestions"></fa-icon>
+	</button>
+	<div class="leading-questions" *ngIf="showSavedLeadingQuestions">
+		<ul>
+			<li class="question-data"
+			*ngFor = "let clq of copiedLeadingQuestions">
+				<button
+				class="copyBoth button-icon-style"
+				tooltip="Copy leading question and choices"
+				placement="auto"
+				(click)="copyLeadingQuestionAndChoices(clq)">
+					<fa-icon icon="copy"></fa-icon>
+				</button>
+				<button
+				class="remove button-icon-style"
+				tooltip="remove"
+				placement="left"
+				(click)="removeFromList(clq)">
+					<fa-icon icon="trash"></fa-icon>
+				</button>
+				<div class="question-container">
+					<p class="title"><strong>Question</strong>
+					<button
+					class="button-icon-style"
+					tooltip="Copy leading question"
+					placement="auto"
+					ngxClipboard
+					[cbContent]="clq.leading_question"
+					(click)="questionCopied()"><fa-icon [icon]="['far', 'clone']"></fa-icon></button>
+				</p>
+					<p>{{clq.leading_question}}</p>
+				</div>
+				<div class="choice-container">
+					<p><strong>Choices</strong>
+						<button
+						class="button-icon-style"
+						tooltip="Copy leading choices"
+						placement="auto"
+						(click)="choicesCopied(clq.choices)"><fa-icon [icon]="['far', 'clone']"></fa-icon></button>
+					</p>
+					<ul class="choices">
+						<li *ngFor="let c of clq.choices">{{c.choice}}</li>
+					</ul>
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>

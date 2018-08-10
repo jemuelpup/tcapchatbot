@@ -1,0 +1,62 @@
+@import '../../../../assets/scss/variables.scss';
+@import '../../../../assets/scss/functions.scss';
+
+.input-group .simulate button{
+	@include border-radius(0);
+	&:last-child{
+		border-top-right-radius: 0.25rem;
+		border-bottom-right-radius: 0.25rem;
+	}
+}
+
+.choice{
+	margin-bottom: 0.5rem;
+}
+#more{
+	width: 30px!important;
+    height: 30px!important;
+    padding: 0;
+	@include border-radius(100%);
+	fa-icon{
+		position: absolute;
+    	top: 0;
+    	left: 0;
+    	right: 0;
+    	bottom: 0;
+	}
+}
+.dropdown-menu{
+	.dropdown-item{
+		&:hover{
+			cursor: pointer;
+		}
+		&:last-child{
+			margin-bottom: 0;
+		}
+	}
+}
+.dropdown-menu{
+	fa-icon{
+		color: #6d6d6d;
+		margin-right: 5px;
+	}
+}
+.doi-container{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	input{
+		width: 65px;
+	}
+}
+.form-check{
+	margin-bottom: 0;
+	margin-right: 0;
+	padding-left: 2rem;
+	margin-right: 0;
+    margin-top: 11px;
+	input[type="checkbox"]{
+		cursor: pointer;
+		margin-right: 0;
+	}
+}

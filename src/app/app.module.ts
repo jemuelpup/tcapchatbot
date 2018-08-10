@@ -1,16 +1,41 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule  } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { RouterModule, Routes } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { AppRoutingModule, RoutingComponents } from './/app-routing.module';
+
+//services
+import { AdminService } from './services/admin.service';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { MessageComponent } from './components/message/message.component';
-import { AdminComponent } from './components/admin/admin.component';
 import { ChatbotComponent } from './components/chatbot/chatbot.component';
-import { LeadingQuestionFormComponent } from './components/leading-question-form/leading-question-form.component';
+import { LeadingQuestionFormComponent } from './components/admin/leading-question-form/leading-question-form.component';
 import { ChatboxComponent } from './components/chatbox/chatbox.component';
+// ngx modules
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { ToastrModule } from 'ngx-toastr';
+import { ClipboardModule } from 'ngx-clipboard';
+// font awesome
+
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faEllipsisV, faPaste, faTrash, faCopy, faClipboard } from '@fortawesome/free-solid-svg-icons';
+import { faClone } from '@fortawesome/free-regular-svg-icons';
+import { SavedLeadingQuestionComponent } from './components/admin/saved-leading-question/saved-leading-question.component';
+
+library.add(faEllipsisV);
+library.add(faCopy);
+library.add(faPaste);
+library.add(faClipboard);
+library.add(faClone);
+library.add(faTrash);
 
 @NgModule({
   declarations: [
@@ -18,17 +43,28 @@ import { ChatboxComponent } from './components/chatbox/chatbox.component';
     HeaderComponent,
     FooterComponent,
     MessageComponent,
-    AdminComponent,
     ChatbotComponent,
     LeadingQuestionFormComponent,
-    ChatboxComponent
+    ChatboxComponent,
+    RoutingComponents,
+    SavedLeadingQuestionComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule, // required animations module
+    ToastrModule.forRoot(), // ToastrModule added
+    AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    ModalModule.forRoot(),
+    BsDropdownModule.forRoot(),
+    TooltipModule.forRoot(),
+    ReactiveFormsModule,
+    HttpClientModule,
+    FontAwesomeModule,
+    ClipboardModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [AdminService],
+  bootstrap: [AppComponent],
+  entryComponents: [ LeadingQuestionFormComponent ]
 })
 export class AppModule { }

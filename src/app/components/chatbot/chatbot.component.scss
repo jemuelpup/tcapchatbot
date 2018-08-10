@@ -1,0 +1,10 @@
+.choices{
+	padding: 0.5rem 0;
+	list-style: none;
+	li{
+		font-size: 0.85rem;
+		&:hover{
+			cursor: pointer;
+		}
+	}
+}
