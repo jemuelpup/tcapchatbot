@@ -34,11 +34,11 @@ export class LeadingQuestionFormComponent implements OnInit {
     console.log(this.leadingQuestion);
   }
   addChoice(){
-    this.leadingQuestion.choices.push({choice_id:0,choice:"",keyword:""});
+    this.leadingQuestion.choices.push({key:0,choice_id:0,choice:"",keyword_id:0,keyword:""});
   }
   // save the choice in the database
   saveChoices(formData){
-    // console.log(this.leadingQuestion);
+    console.log(this.leadingQuestion);
     /**/
     this.bs.processData("insertLeadingQuestionChoices",{
       leadingQuestion: this.leadingQuestion,
@@ -51,6 +51,9 @@ export class LeadingQuestionFormComponent implements OnInit {
     });
     /**/
   }
+  getChangesToPastedChoices(){
+
+  }
   // push the leading question if it is not in array
   copyLeadingQuestion(){
     if(!this.questionArray.find(lq=>lq.leading_question_id==this.leadingQuestion.leading_question_id)){
@@ -61,21 +64,33 @@ export class LeadingQuestionFormComponent implements OnInit {
       this.toastr.success('The leading question is already in the clipboard');
     }
   }
-  removeChoice(choice_id){
-    let i = this.choiceIdArray.indexOf(choice_id);
+  removeChoice(choice_key){
+    this.deleteSelectedChoices = false;
+    let i = this.choiceIdArray.indexOf(choice_key);
     if(i!=-1){
       this.choiceIdArray.splice(i,1);
     }
     else{
-      this.choiceIdArray.push(choice_id);
+      this.choiceIdArray.push(choice_key);
     }
   }
   deleteChoices(){
     console.log(this.choiceIdArray);
     this.deleteSelectedChoices = true;
+
+    (this.choiceIdArray).forEach(c=>{
+      let choiceIndex = (this.leadingQuestion.choices).map(qc=>qc.key).indexOf(c);
+      if(choiceIndex!=-1){
+        this.leadingQuestion.choices.splice(choiceIndex,1);
+      }
+    });
     this.toastr.success("Click save to update leading question");
   }
   pasteChoices(){
-    console.log(this.adminService.copiedLeadingQuestionChoices);
+    (this.adminService.copiedLeadingQuestionChoices).forEach(c=>{
+      if((this.leadingQuestion.choices).map(qc=>qc.key).indexOf(c.key)==-1){
+        this.leadingQuestion.choices.push(c);
+      }
+    });
   }
 }

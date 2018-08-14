@@ -26,7 +26,7 @@ import { ClipboardModule } from 'ngx-clipboard';
 // font awesome
 
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faEllipsisV, faPaste, faTrash, faCopy, faClipboard } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV, faPaste, faTrash, faCopy, faClipboard, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faClone } from '@fortawesome/free-regular-svg-icons';
 import { SavedLeadingQuestionComponent } from './components/admin/saved-leading-question/saved-leading-question.component';
 
@@ -36,6 +36,7 @@ library.add(faPaste);
 library.add(faClipboard);
 library.add(faClone);
 library.add(faTrash);
+library.add(faTimes);
 
 @NgModule({
   declarations: [

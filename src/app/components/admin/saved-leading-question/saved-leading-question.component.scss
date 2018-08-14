@@ -46,12 +46,31 @@
 .choices{
 	display: flex;
 	justify-content: flex-start;
+	flex-wrap: wrap;
 	li{
 		background-color: $color-primary-light;
 		color: #fff;
 		padding: 4px 8px;
 		@include border-radius(5px);
-		margin-right: 4px;
+		margin: 0 4px 4px 0;
 
+	}
+}
+.lq-container-head{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	p{
+		font-size: 14px;
+		font-weight: 700;
+	}
+	.close-leading-questions{
+		width: 20px;
+		height: 20px;
+		cursor: pointer;
+		font-size: 15px;
+    	display: inline-flex;
+    	justify-content: center;
+    	align-items: center;
 	}
 }

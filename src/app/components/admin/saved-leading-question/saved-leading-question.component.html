@@ -5,6 +5,13 @@
 	<fa-icon icon="copy" (click)="showSavedLeadingQuestions = !showSavedLeadingQuestions"></fa-icon>
 	</button>
 	<div class="leading-questions" *ngIf="showSavedLeadingQuestions">
+		<div class="lq-container-head">
+			<p>Copied Leading questions</p>
+			<fa-icon
+			class="close-leading-questions"
+			icon="times"
+			(click)="showSavedLeadingQuestions=false"></fa-icon>
+		</div>
 		<ul>
 			<li class="question-data"
 			*ngFor = "let clq of copiedLeadingQuestions">

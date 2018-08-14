@@ -9,7 +9,6 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./saved-leading-question.component.scss']
 })
 export class SavedLeadingQuestionComponent implements OnInit {
-
 	copiedLeadingQuestions: LeadingQuestion[];
   showSavedLeadingQuestions: boolean = false;
 
@@ -39,4 +38,5 @@ export class SavedLeadingQuestionComponent implements OnInit {
     this.adminService.copiedLeadingQuestionQuestionAndChoice = clqac;
     this.toastr.success("Paste it in leading question list paste icon","Leading question and choices copied.");
   }
+
 }

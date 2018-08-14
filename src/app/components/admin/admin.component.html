@@ -42,6 +42,22 @@
 				</div>
 			</div>
 		</div>
+		<div class="col-md-2">
+			<div class="related-questions">
+				<p><strong>Related Questions</strong></p>
+				<ul class="related-questions-list">
+					<li *ngFor="let q of relatedQuestions" (click)="getRelatedQuestionData(q)">{{q.question}}</li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div class="related-subjects">
+				<p><strong>Related Subject</strong></p>
+				<ul class="related-subjects-list">
+					<li *ngFor="let s of relatedSubjects" (click)="questionSubject=s.subject">{{s.subject}}</li>
+				</ul>
+			</div>
+		</div>
 		<div class="col-md-3">
 			<div class="leading-question-list-container">
 				<p><strong>Leading Questions</strong></p>
@@ -68,22 +84,6 @@
 					</div>
 					<button type="submit" class="btn btn-info" [disabled]="!leadingQuestionForm.valid">Add Leading Question</button>
 				</form>
-			</div>
-		</div>
-		<div class="col-md-2">
-			<div class="related-questions">
-				<p><strong>Related Questions</strong></p>
-				<ul class="related-questions-list">
-					<li *ngFor="let q of relatedQuestions" (click)="getRelatedQuestionData(q)">{{q.question}}</li>
-				</ul>
-			</div>
-		</div>
-		<div class="col-md-2">
-			<div class="related-subjects">
-				<p><strong>Related Subject</strong></p>
-				<ul class="related-subjects-list">
-					<li *ngFor="let s of relatedSubjects" (click)="questionSubject=s.subject">{{s.subject}}</li>
-				</ul>
 			</div>
 		</div>
 	</div>
