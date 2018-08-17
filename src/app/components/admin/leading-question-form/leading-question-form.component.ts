@@ -47,6 +47,7 @@ export class LeadingQuestionFormComponent implements OnInit {
     }).subscribe(r=>{
       this.changed = true;
       this.modalRef.hide();
+      this.toastr.success("Leading question edit saved");
       console.log(r);
     });
     /**/
@@ -84,7 +85,7 @@ export class LeadingQuestionFormComponent implements OnInit {
         this.leadingQuestion.choices.splice(choiceIndex,1);
       }
     });
-    this.toastr.success("Click save to update leading question");
+    this.toastr.info("Click save to update leading question");
   }
   pasteChoices(){
     (this.adminService.copiedLeadingQuestionChoices).forEach(c=>{

@@ -26,7 +26,7 @@
 	box-sizing: $p;
 }
 
-@mixin transition($p){
+@mixin transition($p...){
 	-webkit-transition: $p;
 	-moz-transition: $p;
 	-ms-transition: $p;

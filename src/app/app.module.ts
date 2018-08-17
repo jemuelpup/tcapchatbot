@@ -29,6 +29,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { faEllipsisV, faPaste, faTrash, faCopy, faClipboard, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faClone } from '@fortawesome/free-regular-svg-icons';
 import { SavedLeadingQuestionComponent } from './components/admin/saved-leading-question/saved-leading-question.component';
+import { LeadingQuestionQuestionaireComponent } from './components/admin/leading-question-questionaire/leading-question-questionaire.component';
 
 library.add(faEllipsisV);
 library.add(faCopy);
@@ -48,7 +49,8 @@ library.add(faTimes);
     LeadingQuestionFormComponent,
     ChatboxComponent,
     RoutingComponents,
-    SavedLeadingQuestionComponent
+    SavedLeadingQuestionComponent,
+    LeadingQuestionQuestionaireComponent
   ],
   imports: [
     BrowserModule,
@@ -66,6 +68,6 @@ library.add(faTimes);
   ],
   providers: [AdminService],
   bootstrap: [AppComponent],
-  entryComponents: [ LeadingQuestionFormComponent ]
+  entryComponents: [ LeadingQuestionFormComponent,LeadingQuestionQuestionaireComponent ]
 })
 export class AppModule { }

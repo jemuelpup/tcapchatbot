@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">Leading question questionaire</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+	<div class="questionaire">
+		<label><strong>Main question</strong></label>
+		<p class="question">{{mainQuestion}}</p>
+		<label><strong>Leading question</strong></label>
+		<p class="leading question">{{leadingQuestion}}</p>
+		<label><strong>Choice</strong></label>
+		<ul class="choices">
+			<li
+			class="choice"
+			*ngFor="let c of choices" (click)="next(c)">{{c.choice}}</li>
+		</ul>
+	</div>
+</div>

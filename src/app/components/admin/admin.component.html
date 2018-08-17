@@ -2,16 +2,17 @@
 	<app-saved-leading-question></app-saved-leading-question>
 	<div class="row line-separator">
 		<div class="col-md-5">
-			<label><strong>Conversation</strong></label>
-			<app-chatbox>
+			<p><strong>Conversation</strong></p>
+			<app-chatbox class="chat-box lifted-container">
 				<app-message *ngFor="let m of messages" [message]="m" (click)="getUserQuestion(m.message)"></app-message>
 			</app-chatbox>
 			<div class="chat-training-data">
 				<div class="row">
 					<div class="col-md-12">
-						<form #questionForm="ngForm" (ngSubmit)="saveQuestion(userQuestion,questionSubject,questionKeywords)">
+						<p><strong>Training data</strong></p>
+						<form class="question-form lifted-container" #questionForm="ngForm" (ngSubmit)="saveQuestion(userQuestion,questionSubject,questionKeywords)">
 							<div class="form-group">
-								<label for="topic"><strong>User question</strong></label>
+								<label for="topic" (click)="getSavedConclusion()"><strong>User question</strong></label>
 								<input #questionInput class="form-control" [(ngModel)]="userQuestion" type="text" name="userQuestion" id="userQuestions" required>
 							</div>
 							<div class="form-group">
@@ -19,7 +20,7 @@
 								<input #subjectInput class="form-control" [(ngModel)]="questionSubject" type="text" name="questionSubject" id="questionSubject" required>
 							</div>
 							<div class="keywordsarea">
-								<p><strong class="mr0_5rem">Keywords:</strong> <span (click)="removeKeyword(i)" *ngFor="let kw of questionKeywords index as i">{{kw}}</span></p>
+								<p><strong class="mr0_5rem">Keywords:</strong> <span (click)="removeKeyword(i)" *ngFor="let kw of questionKeywords index as i">{{kw.keyword}}</span></p>
 							</div>
 							<div class="input-group mb-1">
 								<div class="form-group">
@@ -31,12 +32,18 @@
 							</div>
 							<button type="submit" class="btn btn-primary" [disabled]="!questionForm.valid">Save Question</button>
 						</form>
-						<form #answerFrom="ngForm" (ngSubmit)="saveAnswer(questionAnswer)">
+						<form class="answer-form lifted-container" #answerFrom="ngForm" (ngSubmit)="saveAnswer(questionAnswer)">
 							<div class="form-group">
-								<label for="answer"><strong>Answer</strong></label>
+								<label><strong>Question:</strong></label>
+								<p *ngIf="relatedQuestion.question">{{relatedQuestion.question}}</p>
+								<label><strong>Keywords:</strong></label>
+								<p><span *ngFor="let k of conclusionKeywordReference">{{k.keyword}},</span>
+								</p>
+								<label for="answer"><strong>Answer:</strong></label>
 								<input type="email" class="form-control" [(ngModel)]="questionAnswer" name="answer" placeholder="Answer" required>
 							</div>
 							<button type="submit" class="btn btn-success" [disabled]="!answerFrom.valid">Set Answer</button>
+							<button type="button" class="btn btn-info" (click)="showLeadingQuestion()">Answer leading questions</button>
 						</form>
 					</div>
 				</div>
@@ -45,7 +52,7 @@
 		<div class="col-md-2">
 			<div class="related-questions">
 				<p><strong>Related Questions</strong></p>
-				<ul class="related-questions-list">
+				<ul class="related-questions-list	lifted-container">
 					<li *ngFor="let q of relatedQuestions" (click)="getRelatedQuestionData(q)">{{q.question}}</li>
 				</ul>
 			</div>
@@ -53,27 +60,24 @@
 		<div class="col-md-2">
 			<div class="related-subjects">
 				<p><strong>Related Subject</strong></p>
-				<ul class="related-subjects-list">
-					<li *ngFor="let s of relatedSubjects" (click)="questionSubject=s.subject">{{s.subject}}</li>
+				<ul class="related-subjects-list lifted-container">
+					<li *ngFor="let s of relatedSubjects" (click)="getRelatedQuestionFromSubject(s);">{{s.subject}}</li>
 				</ul>
 			</div>
 		</div>
 		<div class="col-md-3">
 			<div class="leading-question-list-container">
 				<p><strong>Leading Questions</strong></p>
-				<button
-				class="paste button-icon-style"
-				tooltip="Paste copied leading question"
-				placement="auto"
-				(click)="pasteLeadingQuestionAndChoices()">
+				<button class="paste button-icon-style" tooltip="Paste copied leading question" placement="auto" (click)="pasteLeadingQuestionAndChoices()">
 					<fa-icon icon="paste"></fa-icon>
 				</button>
-				<ul class="leading-questions-list">
+				<ul class="leading-questions-list lifted-container">
 					<li *ngFor="let l of leadingQuestions" (click)="getLeadingQuestionData(l)">{{l.leading_question}}</li>
 				</ul>
 			</div>
 			<div class="add-leading-question-form">
-				<form [formGroup]="leadingQuestionForm" (ngSubmit)="addLeadingQuestion(leadingQuestionForm)">
+				<label><strong>Add leading question</strong></label>
+				<form class="lifted-container" [formGroup]="leadingQuestionForm" (ngSubmit)="addLeadingQuestion(leadingQuestionForm)">
 					<div class="form-group">
 						<label><strong>Degree of importance</strong></label>
 						<input type="number" [value]=5 class="form-control" formControlName="degreeOfImportance" name="degreeOfImportance" placeholder="Degree of importance">
@@ -89,3 +93,6 @@
 	</div>
 	<!-- <app-leading-question-form></app-leading-question-form> -->
 </div>
+<!-- /*
+I am a hard working employee with the eagerness to learn new things in the web development. In our company, I was a researcher and front end web developer for almost 3 years and developed many japanese websites. I was also a fullstack web developer in my freelance that makes me enhance my skills. I know that I can share my skills and tallent in this company.
+*/ -->

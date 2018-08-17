@@ -13,6 +13,7 @@ export class AdminService {
 	copiedLeadingQuestions: LeadingQuestion[] = [];// list of leading question
   copiedLeadingQuestionQuestionAndChoice: LeadingQuestion; // leading question and choice
   copiedLeadingQuestionChoices: Choice[]=[];//change the datatype
+  leadingQuestionCollectedKeywords: Choice[] = [];
 
   constructor() {
   }

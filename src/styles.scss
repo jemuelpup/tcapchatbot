@@ -5,6 +5,9 @@
 @import './assets/scss/functions.scss';
 @import '~ngx-toastr/toastr.css';
 
+body{
+	background-color: #f1f1f1;
+}
 ol, ul {
 	list-style: none;
 	padding-left: 0;
@@ -17,6 +20,9 @@ ol, ul {
 
 .mr0_5rem{
 	margin-right: 0.5rem;
+}
+.mb1rem{
+	margin-bottom: 1rem!important;
 }
 .mb0{
 	margin-bottom: 0!important;

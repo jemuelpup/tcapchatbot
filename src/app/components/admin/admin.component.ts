@@ -4,17 +4,19 @@ import { Message } from '../../models/message';
 import { Question } from '../../models/question';
 import { LeadingQuestion } from '../../models/leading-question';
 import { Choice } from '../../models/choice';
+import { Keyword } from '../../models/keyword';
 import { RelatedQuestion } from '../../models/related-question';
 
 import { Observable } from "rxjs";
 
 import { LeadingQuestionFormComponent } from "../../components/admin/leading-question-form/leading-question-form.component";
+import { LeadingQuestionQuestionaireComponent } from "../../components/admin/leading-question-questionaire/leading-question-questionaire.component";
 
 import { BackendService } from '../../services/backend.service';
 import { ObservableFunctionsService } from '../../services/observable-functions.service';
 import { AdminService } from '../../services/admin.service';
 import { CommonFunctionsService } from '../../services/common-functions.service';
-
+import { ToastrService } from 'ngx-toastr';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { combineLatest, Subscription } from 'rxjs';
@@ -35,7 +37,7 @@ export class AdminComponent implements OnInit {
   question: Question;// this is the question input
 	messages: Message[];
 	questionSubject: string;
-  questionKeywords: {}[];
+  questionKeywords: Keyword[];
   relatedQuestions: RelatedQuestion[];
   relatedQuestion: RelatedQuestion;
   relatedSubjects: {}[];
@@ -44,13 +46,13 @@ export class AdminComponent implements OnInit {
   keyword: string;
   userQuestion: string;
   questionAnswer: string;
-  generatedQuestionData: {};
   degreeOfImportance: number;
   leadingQuestions: LeadingQuestion[];
   closeResult: string;
   leadingQuestion: string = "question";
   leadingQuestionChoices: Choice[] = [];
   leadingQuestionForm;
+  conclusionKeywordReference: Keyword[] = []; // this variable collects all the added keywords in the leading question
 
   constructor(
     public bs: BackendService,
@@ -59,7 +61,8 @@ export class AdminComponent implements OnInit {
     public formB: FormBuilder,
     public adminService: AdminService,
     private modalService: BsModalService,
-    private changeDetection: ChangeDetectorRef
+    private changeDetection: ChangeDetectorRef,
+    private toast: ToastrService
   ) {
   }
   ngOnInit() {
@@ -90,6 +93,7 @@ export class AdminComponent implements OnInit {
     .subscribe((val: string) => {
       if(this.userQuestion!=="")
         this.getUserQuestion(this.userQuestion);
+      this.leadingQuestions = [];
     });
     this.o.setInputTextDebounce(this.subjectInput.nativeElement)
     .subscribe((val: string) => {
@@ -120,7 +124,7 @@ export class AdminComponent implements OnInit {
           this.getRelatedQuestionData(this.relatedQuestion);
         }
       })
-    ); 
+    );
   }
   unsubscribe() {
     this.subscriptions.forEach((subscription: Subscription) => {
@@ -148,21 +152,25 @@ export class AdminComponent implements OnInit {
   	this.bs.processData("getQuestionDetails",{
     	question_id: q.question_id
     }).subscribe(r=>{
-    	// console.log(q)
-      // console.log(r)
-
-    	/**/
       this.question = new Question(
-        // nandito yung mali.
     		q.question_id,q.question,r.subject_id,r.subject,r.keywords
     	);
     	this.userQuestion = q.question;
     	this.questionSubject = r.subject;
-      this.questionAnswer = r.conclusion;
-    	this.questionKeywords = r.keywords.map(keyword=>keyword.keyword);
+      this.conclusionKeywordReference = [...r.keywords];
+    	this.questionKeywords = r.keywords;
     	this.allowAnswerGeneration = true;
     	this.leadingQuestions = r.leading_questions ? r.leading_questions : [];
-      /**/
+      this.getSavedConclusion();
+    });
+  }
+  getRelatedQuestionFromSubject(s){
+    this.questionSubject=s.subject;
+    this.leadingQuestions = [];
+    this.bs.processData("getRelatedQuestionFromSubject",{
+      subject_id: s.id
+    }).subscribe(r=>{
+      this.relatedQuestions = r;
     });
   }
   getRelatedSubjects(s){
@@ -170,26 +178,32 @@ export class AdminComponent implements OnInit {
     	subject: s
     }).subscribe(r=>{
     	this.relatedSubjects = r;
-    	// console.log(r);
+      this.leadingQuestions = [];
     });
   }
   // question, subject, questionKeywords
   saveQuestion(q,s,kw){
+    this.toast.info("Saving question");
     this.bs.processData("insertQuestion",{
     	question: q,
     	subject: s,
     	questionKeywords: kw
     }).subscribe(r=>{
     	this.allowAnswerGeneration = true;
+      this.relatedQuestions = r;
+      this.getUserQuestion(q);
+      this.toast.success("Set the answer to the question","Question Saved");
     });
   }
   // triggers when the question in the chatbox was clicked
   getUserQuestion(userQuestion){
     this.userQuestion = userQuestion;
     this.questionKeywords = this.cf.getWords(userQuestion);
-    this.cf.getRelatedQuestions(this.questionKeywords)
+    let kw = this.questionKeywords.map(k=>k.keyword);
+    this.cf.getRelatedQuestions(kw)
     .subscribe(r=>{
       this.relatedQuestions = r;
+      this.leadingQuestions = [];
     })
   }
   // remove an element in keyword array
@@ -200,7 +214,7 @@ export class AdminComponent implements OnInit {
   // adds keyword in the array
   addKeyword(keyword){
     if(keyword.length){
-      this.questionKeywords.push(keyword);
+      this.questionKeywords.push(<Keyword>{id:0,keyword:keyword});
       this.keyword = "";
       // console.log()
     }
@@ -234,25 +248,6 @@ export class AdminComponent implements OnInit {
   		);
   	}
  	}
-  saveAnswer(ans){
-  	console.log(ans);
-  	if(this.question){ // means question has laman.
-  		let questionDetailsAndAnswer = this.question;
-
-	  	this.bs.processData("insertAnswerToQuestion",{
-	    	questionDetails:this.question,
-	    	answer: ans
-	    }).subscribe(r=>{
-	    	// console.log(r);
-	    });
-  		// console.log("may laman");
-  	}
-  	else{
-  		// console.log("walang laman");	
-  	}
-  	// console.log(this.question);
-  	// console.log(this.question);
-  }
   /* Creating leading questions */
   addLeadingQuestion(leadingQuestion){
     if(this.question){
@@ -300,5 +295,68 @@ export class AdminComponent implements OnInit {
     }
     /**/
   }
-  
+  showLeadingQuestion(){
+    if(this.leadingQuestions.map(lq=>lq.choices.length).indexOf(0)==-1){
+      this.openLeadingQuestionsModal();
+    }
+    else if(confirm("One leading question has no choice? Do you still want to continue?")){
+      this.openLeadingQuestionsModal();
+      console.log("")
+    }
+  }
+  openLeadingQuestionsModal(){
+    this.conclusionKeywordReference = [...this.questionKeywords];
+    this.modalRef = this.modalService.show(LeadingQuestionQuestionaireComponent, {
+      initialState: {
+        leadingQuestions: this.leadingQuestions,
+        question: this.question
+      }
+    });
+    const _combine = combineLatest(
+      this.modalService.onHide
+    ).subscribe(() => this.changeDetection.markForCheck());
+    this.subscriptions.push(_combine);
+    // this is the callback when the modal is closed;
+    this.subscriptions.push(
+      this.modalService.onHide.subscribe((reason: string) => {
+        this.unsubscribe();
+        if(this.adminService.leadingQuestionCollectedKeywords.length){
+          this.adminService.leadingQuestionCollectedKeywords.forEach(c=>{
+            this.conclusionKeywordReference.push(<Keyword>{ id:c.keyword_id, keyword: c.keyword });
+          });
+          this.getSavedConclusion();
+        }
+        else{
+          this.questionAnswer = "";
+        }
+      })
+    );
+  }
+  // Under construction
+  saveAnswer(ans){
+    console.log(ans);
+    if(this.question){ // means question has text.
+      if(this.conclusionKeywordReference.length){
+        let questionDetailsAndAnswer = this.question;
+        this.bs.processData("insertAnswerToQuestion",{
+          questionDetails:this.question,
+          answer: ans,
+          keywords: this.conclusionKeywordReference.map(kw=>kw.id)
+        }).subscribe(r=>{
+          console.log(r);
+        });
+      }
+    }
+  }
+  getSavedConclusion(){
+    console.log(this.conclusionKeywordReference.map(kw=>kw.id));
+    console.log(this.question.question_id);
+    this.bs.processData("getQuestionAnswer",{
+      keyword_ids: this.conclusionKeywordReference.map(kw=>kw.id),
+      question_id: this.question.question_id
+    }).subscribe(r=>{
+      console.log(r);
+      this.questionAnswer = r.answer;
+    });
+  }
 }
