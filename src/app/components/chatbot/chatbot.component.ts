@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonFunctionsService } from '../../services/common-functions.service';
 import { Message } from '../../models/message';
+import { LeadingQuestion } from '../../models/leading-question';
 import { BackendService } from '../../services/backend.service';
 
 @Component({
@@ -16,14 +17,19 @@ export class ChatbotComponent implements OnInit {
 	answer: string;
 	messages: Message[];
   userQuery: string;
+  leadingQuestions: LeadingQuestion[];
+  leadingQuestion: LeadingQuestion;
+  lqIndex: number;
+  kewordIds: number[];
+  questionId: number;
 
   /* <finite-state-machine> */
-  // start:number = 0;
-  // s1:number = 1; // get similarquestion
-  // s2:number = 2; // get leading question
-  // s3:number = 3; // get conclusion
+  startState:number = 0; // user ask the question
+  showSimilarQuestionState:number = 1; // show similarquestion
+  showLeadingQuestionState:number = 2; // show leading question
+  showConclusion:number = 3; // get conclusion
   // s4:number = 999; // terminal state
-  // state:number = 0;
+  state:number = this.startState;
   /* </finite-state-machine> */
 
   constructor(
@@ -35,43 +41,22 @@ export class ChatbotComponent implements OnInit {
   	this.relatedQuestions = [];
 		this.relatedSubjects = [];
 		this.messages = [];
+    this.kewordIds = [];
 		this.answer = "";
     this.userQuery = "";
-		// this.getRelatedQuestions("portrait lens");
+    this.leadingQuestions = [];
+    this.lqIndex = 0;
+    this.questionId = 0;
 		this.testSimulation();
-		/* <testing here> */
-		// this.talkToChatbot("lens");
-		/* </testing here> */
+    /* testing */
+    // this.talkToChatbot("portrait lens");
 
-    /* <finite-state-machine> */
-    // this.state = this.start;
-    /* </finite-state-machine> */
+    // this.getLeadingQuestion(1);
+    /***********/
   }
-  // navigateState(){
-  //   switch (this.state) {
-  //     case this.start:{
-  //       this.state = 1;
-  //     }break;
-  //     case this.s1:{
-  //       if(0){
-
-  //       }
-  //     }break;
-  //     case this.s2:{
-  //       if(0){
-
-  //       }
-  //     }break;
-  //     case this.s3:{
-  //       if(0){
-
-  //       }
-  //     }break;
-  //   }
-  // }
   getRelatedQuestions(question){
     return this.cf.getRelatedQuestions(
-    	this.cf.getWords(question)
+    	this.cf.getWords(question).map(w=>w.keyword)
     )
   }
   talkToChatbot(userQuery){
@@ -84,48 +69,104 @@ export class ChatbotComponent implements OnInit {
 					senderImg: '',
 		  	}
   		);
-      // this.navigateState();
-      // get the question, proceed to conclusion
-  		this.getRelatedQuestions(userQuery).subscribe(r=>{
-        this.sendSimilarQuestion(r);
-        console.log(r)
-      })
+      if(this.state==this.startState){
+    		this.getRelatedQuestions(userQuery).subscribe(r=>{
+          this.sendSimilarQuestion(r);
+          console.log(r);
+          this.state=this.showSimilarQuestionState;
+        })
+
+      }
   	}
   }
   sendSimilarQuestion(questions){
   	console.log(questions)
+    let choices = questions.map(q=>{
+      return {
+        question_id: q.question_id,
+        choice: q.question
+      }
+    });
   	this.messages.push(
   		<Message>{
 	  		message: "Is you question similar to the following question? If yes, just click the question.",
 				sender: "chatbot",
-				choices: questions,
+				choices: choices,
 				senderImg: '',
 	  	}
 	  );
   }
-  getConclusion(){}
-  selectInChoice(selectedSimilarQuestion){
+  getLeadingQuestion(qId){
+    // console.log(qId)
+    this.getQuestionKeyword(qId);
+    return this.bs.processData("getLeadingQuestions",{
+      question_id: qId
+    }).subscribe(r=>{
+      console.log(r)
+      if(r.length){
+        this.leadingQuestions = r;
+        this.lqIndex = 0;
+        this.state=this.showLeadingQuestionState;
+        this.showLeadingQuestion();
+      }
+      else{
+        this.getConclusion();
+      }
+    }); 
+  }
+  getQuestionKeyword(qID){
+    this.bs.processData("getKeywordIdsOfReservedQuestions",{
+      question_id: qID
+    }).subscribe(r=>{
+      // console.log(r);
+      this.kewordIds = r.map(r=>r.keyword_fk);
+    });/**/
+  }
+  selectInChoice(selectedChoice){
+    console.log("nagkiclick");
     this.messages.push(
       <Message>{
-        message: selectedSimilarQuestion.question,
+        message: selectedChoice.choice,
         sender: "user",
         choices: [],
         senderImg: '',
       }
     );
-    this.bs.processData("getQuestionDetails",{
-      questionId: selectedSimilarQuestion.id
-    }).subscribe(r=>{
-      console.log(r.conclusion);
-      this.messages.push(
-        <Message>{
-          message: r.conclusion,
-          sender: "chatbot",
-          choices: [],
-          senderImg: '',
-        }
-      );
-    });/**/
+    if(this.state==this.showSimilarQuestionState){
+      console.log(selectedChoice);
+      this.questionId = selectedChoice.question_id;
+      this.getLeadingQuestion(this.questionId);
+      this.state=this.showLeadingQuestionState;
+      
+    }
+    else if(this.state==this.showLeadingQuestionState){
+      this.lqIndex++;
+      this.kewordIds.push(selectedChoice.keyword_id);
+      console.log(this.kewordIds);
+      if(this.lqIndex==this.leadingQuestions.length){
+        this.state==this.showConclusion;
+        this.getConclusion();
+      }
+      else{
+        this.showLeadingQuestion();
+      }
+      
+    }
+  }
+  showLeadingQuestion(){
+    console.log(this.leadingQuestions);
+    this.leadingQuestion = this.leadingQuestions[this.lqIndex];
+    this.messages.push(
+      <Message>{
+        message: this.leadingQuestion.leading_question,
+        sender: "chatbot",
+        choices: this.leadingQuestion.choices,
+        senderImg: '',
+      }
+    );
+    console.log(this.lqIndex,this.leadingQuestions.length);
+    
+    
   }
   testSimulation(){
 		this.messages.push(
@@ -136,5 +177,44 @@ export class ChatbotComponent implements OnInit {
 	  	}
 		);
  	}
+  skip(){
+    // console.log("Dumaan sa skip");
+    // console.log(this.state,this.showSimilarQuestionState);
+    if(this.state==this.showSimilarQuestionState){
+      // UNDER CONSTRUCTION
+      // assign keywordIds in the words
+
+      this.getConclusion();
+    }
+  }
+
+  getConclusion(){ // generate conclusion
+    
+    console.log(this.questionId)
+    console.log(this.kewordIds)
+    this.bs.processData("getQuestionAnswer",{
+      kw_ids : this.kewordIds,
+      question_id: this.questionId
+    }).subscribe(r=>{
+      console.log(r)
+      console.log(r.conclusion);
+      this.messages.push(
+        <Message>{
+          message: r.conclusion,
+          sender: "chatbot",
+          choices: [],
+          senderImg: '',
+        }
+      );
+      this.reset();
+    });/**/
+  }
+  reset(){
+    this.questionId=0;
+    this.kewordIds=[];
+    this.leadingQuestions = [];
+    this.lqIndex = -1;
+    this.state=this.startState;
+  }
 
 }

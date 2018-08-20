@@ -199,6 +199,7 @@ export class AdminComponent implements OnInit {
   getUserQuestion(userQuestion){
     this.userQuestion = userQuestion;
     this.questionKeywords = this.cf.getWords(userQuestion);
+    console.log(this.questionKeywords);
     let kw = this.questionKeywords.map(k=>k.keyword);
     this.cf.getRelatedQuestions(kw)
     .subscribe(r=>{
@@ -351,7 +352,7 @@ export class AdminComponent implements OnInit {
   getSavedConclusion(){
     console.log(this.conclusionKeywordReference.map(kw=>kw.id));
     console.log(this.question.question_id);
-    this.bs.processData("getQuestionAnswer",{
+    this.bs.processData("getSavedAnswerInQuestion",{
       keyword_ids: this.conclusionKeywordReference.map(kw=>kw.id),
       question_id: this.question.question_id
     }).subscribe(r=>{

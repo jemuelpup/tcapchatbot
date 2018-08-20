@@ -22,10 +22,10 @@ export class CommonFunctionsService {
     });
   }
   getRelatedQuestions(kw){//keywords
+    console.log(kw);
   	return this.bs.processData("getRelatedQuestions",{
     	questionKeywords: kw
     });
   }
 }
-//Good morning mam. Is there any update in my application?
-// 
+// portrait lens
