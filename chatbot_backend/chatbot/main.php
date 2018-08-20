@@ -53,16 +53,24 @@ switch($process){
 	case "insertLeadingQuestionChoices": { $admin->insertLeadingQuestionChoices($conn,$data); } break;
 	case "pasteLeadingQuestion":{ $admin->pasteLeadingQuestion($conn,$data); }break;
 	case "getRelatedQuestionFromSubject":{ $admin->getRelatedQuestionFromSubject($conn,$data); }break;
-	case "getQuestionAnswer":{
-		$answer = "";
-		$generated_ans = $admin->getQuestionAnswer($conn,$data->keyword_ids,$data->question_id);
-		if($generated_ans["conclusion_percentage"]==100){
-			print_r(json_encode(["percentage"=>$generated_ans["conclusion_percentage"],"answer"=>$generated_ans["conclusion"]]));
-		}
-		else{
-			print_r(json_encode(["percentage"=>$generated_ans["conclusion_percentage"],"answer"=>""]));
-		}
+	case "getSavedAnswerInQuestion":{ getSavedAnswerInQuestion($conn,$data,$admin); }break;
+	case "getLeadingQuestions":{
+		print_r(json_encode(getLeadingQuestions($conn,$data->question_id)));
+		
 	}break;
+	case "getQuestionAnswer":{ 
+		print_r(json_encode($admin->getQuestionAnswer($conn,$data->kw_ids,$data->question_id))); }break;
+	case "getKeywordIdsOfReservedQuestions": {getKeywordIdsOfReservedQuestions($conn,$data->question_id);} break;
+}
+function getSavedAnswerInQuestion($c,$d,$admin){
+	$answer = "";
+	$generated_ans = $admin->getQuestionAnswer($c,$d->keyword_ids,$d->question_id);
+	if($generated_ans["conclusion_percentage"]==100){
+		print_r(json_encode(["percentage"=>$generated_ans["conclusion_percentage"],"answer"=>$generated_ans["conclusion"]]));
+	}
+	else{
+		print_r(json_encode(["percentage"=>$generated_ans["conclusion_percentage"],"answer"=>""]));
+	}
 }
 
 /*
@@ -387,6 +395,10 @@ function getLeadingQuestionWithoutChoices($c,$questionId,$leadingQuestionsIdToSk
 	return $leading_question_and_choices;
 }
 
+function getKeywordIdsOfReservedQuestions($c, $questionID){
+	$sql = "SELECT keyword_fk FROM question_keyword_tbl WHERE active = 1 AND question_fk = $questionID";
+	print_r(hasRows($c,$sql) ? json_encode(selectQuery($c,$sql)) : "");
+}
 
 // returns the set of related questions
 function getRelatedQuestions($c,$d){
@@ -415,7 +427,10 @@ function getRelatedQuestions($c,$d){
 // returns the keyword in string list with mysqli real scape string
 function getKeywords($c,$keywordsArray){
 	$keywords = "";
-	foreach ($keywordsArray as $keyword) { $keywords .= "'".mysqli_real_escape_string($c,$keyword)."',"; }
+	// print_r(json_encode($keywordsArray));
+	foreach ($keywordsArray as $keyword) {
+		$keywords .= "'".mysqli_real_escape_string($c,$keyword)."',"; 
+	}
 	return substr_replace($keywords, "", -1);
 }
 // get the related subject
