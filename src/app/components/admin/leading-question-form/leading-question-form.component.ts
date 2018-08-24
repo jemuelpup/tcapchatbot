@@ -37,7 +37,7 @@ export class LeadingQuestionFormComponent implements OnInit {
     this.leadingQuestion.choices.push({key:0,choice_id:0,choice:"",keyword_id:0,keyword:""});
   }
   // save the choice in the database
-  saveChoices(formData){
+  saveChoices(){
     console.log(this.leadingQuestion);
     /**/
     this.bs.processData("insertLeadingQuestionChoices",{

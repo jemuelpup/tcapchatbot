@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-
+import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class BackendService {
 
-	phpUrlTest: string = "http://localhost/angular2/backend/chatbot/main.php";
-	phpUrl: string = "http://localhost/angular2/backend/chatbot/main.php";
+	phpUrlTest: string = "http://"+environment.serverLocation+"/angular2/backend/chatbot/main.php";
+	phpUrl: string = "http://"+environment.serverLocation+"/angular2/backend/chatbot/main.php";
   constructor(
     private http: HttpClient,
     

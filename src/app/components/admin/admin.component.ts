@@ -5,6 +5,7 @@ import { Question } from '../../models/question';
 import { LeadingQuestion } from '../../models/leading-question';
 import { Choice } from '../../models/choice';
 import { Keyword } from '../../models/keyword';
+import { Subject } from '../../models/subject';
 import { RelatedQuestion } from '../../models/related-question';
 
 import { Observable } from "rxjs";
@@ -40,7 +41,7 @@ export class AdminComponent implements OnInit {
   questionKeywords: Keyword[];
   relatedQuestions: RelatedQuestion[];
   relatedQuestion: RelatedQuestion;
-  relatedSubjects: {}[];
+  relatedSubjects: Subject[];
   mainQuestion: string;
   allowAnswerGeneration: boolean;
   keyword: string;
@@ -70,8 +71,13 @@ export class AdminComponent implements OnInit {
     this.userQuestion = "";
   	this.questionSubject = "";
   	this.messages = [];
+  	this.question = null;
     this.questionKeywords = [];
     this.relatedQuestions = [];
+    this.relatedQuestion={
+    	question_id: 0,
+			question: ""
+    };
     this.relatedSubjects = [];
     this.keyword = "";
     this.mainQuestion = "";
@@ -84,20 +90,21 @@ export class AdminComponent implements OnInit {
 		// initialization
   	this.testSimulation();
     /* <testing> */
-    this.getRelatedQuestionData({question_id:1,question:"lens for portrait"});
+    // this.getRelatedQuestionData({question_id:1,question:"lens for portrait"});
+    // this.getUserQuestion("lens for portrait");
     /* </testing> */
     // this.getUserQuestion({message:"What is the best lens for portrait for nikon dlsr to be used indoor without external flash can be used in groupshots with a budget of $200-$300?"});
   }
   ngAfterViewInit() {
     this.o.setInputTextDebounce(this.questionInput.nativeElement)
     .subscribe((val: string) => {
-      if(this.userQuestion!=="")
+      if(this.userQuestion!==""&&this.userQuestion.replace(/\s/g, "")!=="")
         this.getUserQuestion(this.userQuestion);
       this.leadingQuestions = [];
     });
     this.o.setInputTextDebounce(this.subjectInput.nativeElement)
     .subscribe((val: string) => {
-      if(this.questionSubject!=="")
+      if(this.questionSubject!==""&&this.questionSubject.replace(/\s/g, "")!=="")
         this.getRelatedSubjects(this.questionSubject);
     });
   }
@@ -152,16 +159,22 @@ export class AdminComponent implements OnInit {
   	this.bs.processData("getQuestionDetails",{
     	question_id: q.question_id
     }).subscribe(r=>{
-      this.question = new Question(
-    		q.question_id,q.question,r.subject_id,r.subject,r.keywords
-    	);
     	this.userQuestion = q.question;
-    	this.questionSubject = r.subject;
-      this.conclusionKeywordReference = [...r.keywords];
-    	this.questionKeywords = r.keywords;
-    	this.allowAnswerGeneration = true;
-    	this.leadingQuestions = r.leading_questions ? r.leading_questions : [];
-      this.getSavedConclusion();
+    	console.log(r)
+      if(r){
+      	console.log("pumasok")
+        this.question = new Question(
+      		q.question_id,q.question,r.subject_id,r.subject,r.keywords
+      	);
+      	this.questionSubject = r.subject;
+        this.conclusionKeywordReference = [...r.keywords];
+      	this.questionKeywords = r.keywords;
+      	this.allowAnswerGeneration = true;
+      	console.log(r.leading_questions)
+      	this.leadingQuestions = r.leading_questions ? r.leading_questions : [];
+      	this.getRelatedSubjects(r.subject)
+        this.getSavedConclusion();
+      }
     });
   }
   getRelatedQuestionFromSubject(s){
@@ -178,7 +191,6 @@ export class AdminComponent implements OnInit {
     	subject: s
     }).subscribe(r=>{
     	this.relatedSubjects = r;
-      this.leadingQuestions = [];
     });
   }
   // question, subject, questionKeywords
@@ -189,10 +201,14 @@ export class AdminComponent implements OnInit {
     	subject: s,
     	questionKeywords: kw
     }).subscribe(r=>{
-    	this.allowAnswerGeneration = true;
-      this.relatedQuestions = r;
-      this.getUserQuestion(q);
-      this.toast.success("Set the answer to the question","Question Saved");
+    	if(r){
+    		console.log(r)
+	    	this.allowAnswerGeneration = true;
+	      this.getUserQuestion(q);
+	      this.relatedQuestions.push(q);
+	      this.questionKeywords = r.keywordArray;
+	      this.toast.success("Set the answer to the question","Question Saved");
+      }
     });
   }
   // triggers when the question in the chatbox was clicked
@@ -201,10 +217,14 @@ export class AdminComponent implements OnInit {
     this.questionKeywords = this.cf.getWords(userQuestion);
     console.log(this.questionKeywords);
     let kw = this.questionKeywords.map(k=>k.keyword);
-    this.cf.getRelatedQuestions(kw)
-    .subscribe(r=>{
-      this.relatedQuestions = r;
-      this.leadingQuestions = [];
+    this.relatedQuestions = [];
+    this.cf.getRelatedQuestions(kw).subscribe(r=>{
+    	if(r){
+    		this.questionSubject = "";
+	      this.relatedQuestions = r;
+	      this.leadingQuestions = [];
+	      this.question = null;
+      }
     })
   }
   // remove an element in keyword array
@@ -254,17 +274,32 @@ export class AdminComponent implements OnInit {
     if(this.question){
     	// console.log(this.question);
     	// console.log(leadingQuestion.value);
+    	this.toast.info("Saving Leading question");
+    	console.log(this.leadingQuestionForm.value);
+    	/**/
       this.bs.processData("insertLeadingQuestion",{
         questionId: this.question.question_id,
         degreeOfImportance: leadingQuestion.value.degreeOfImportance,
         leadingQuestion: leadingQuestion.value.leadingQuestion
       }).subscribe(r=>{
+      	this.leadingQuestions.push(<LeadingQuestion>{
+      		leading_question_id: r.leading_question_id,
+					leading_question: this.leadingQuestionForm.value.leadingQuestion,
+					degree_of_importance: this.leadingQuestionForm.value.degreeOfImportance,
+					choices: []
+      	});
+	    	this.leadingQuestionForm.setValue({
+	    		degreeOfImportance: 5,
+	    		leadingQuestion: ""
+	    	});
+				this.toast.success("Leading question Saved");
         // console.log(r);
         // the response should be the leading questions list
       });
+      /**/
     }
     else{
-      console.log("select question related question first");  
+    	this.toast.error("Select related question first","Error");
     }
   }
   pasteLeadingQuestionAndChoices(){
@@ -335,15 +370,16 @@ export class AdminComponent implements OnInit {
   }
   // Under construction
   saveAnswer(ans){
-    console.log(ans);
     if(this.question){ // means question has text.
       if(this.conclusionKeywordReference.length){
+      	this.toast.info("Saving answer");
         let questionDetailsAndAnswer = this.question;
         this.bs.processData("insertAnswerToQuestion",{
           questionDetails:this.question,
           answer: ans,
           keywords: this.conclusionKeywordReference.map(kw=>kw.id)
         }).subscribe(r=>{
+        	this.toast.success("Answer Saved");
           console.log(r);
         });
       }

@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AppRoutingModule, RoutingComponents } from './/app-routing.module';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 //services
 import { AdminService } from './services/admin.service';
@@ -66,7 +67,10 @@ library.add(faTimes);
     FontAwesomeModule,
     ClipboardModule
   ],
-  providers: [AdminService],
+  providers: [
+    AdminService,
+    {provide: LocationStrategy, useClass: HashLocationStrategy}
+  ],
   bootstrap: [AppComponent],
   entryComponents: [ LeadingQuestionFormComponent,LeadingQuestionQuestionaireComponent ]
 })
