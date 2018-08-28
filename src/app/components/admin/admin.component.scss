@@ -66,6 +66,9 @@ app-message:hover{
 .chat-box{
 	display: block;
 	padding: 0;
+	p{
+		margin-bottom: 0;
+	}
 }
 .lifted-container{
 	background-color: #fff;

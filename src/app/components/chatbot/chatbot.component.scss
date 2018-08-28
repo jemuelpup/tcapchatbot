@@ -8,3 +8,36 @@
 		}
 	}
 }
+.chatbox{
+	p{
+		margin-bottom: 0;
+	}
+}
+
+
+
+.chatbot-loader{
+	font-size: 0.85rem;
+    background-color: #768fff;
+    color: #fff;
+    display: none;
+    padding: 5px 11px;
+    max-width: 90%;
+    margin-bottom: 1rem;
+    text-align: left;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+   	p{
+		width: 28px;
+	    display: flex;
+	    justify-content: space-between;
+	    align-items: center;
+	    padding: 3px 0;
+	   	img{
+	    	width: 100%;
+	    }
+    }
+    &.show{
+    	display: inline-block;
+    }
+}

@@ -4,7 +4,9 @@
 		<div class="col-md-5">
 			<p><strong>Conversation</strong></p>
 			<app-chatbox class="chat-box lifted-container">
-				<app-message *ngFor="let m of messages" [message]="m" (click)="getUserQuestion(m.message)"></app-message>
+				<app-message *ngFor="let m of messages" [message]="m" (click)="getUserQuestion(m.message)">
+					<p>{{m.message}}</p>
+				</app-message>
 			</app-chatbox>
 			<div class="chat-training-data">
 				<div class="row">

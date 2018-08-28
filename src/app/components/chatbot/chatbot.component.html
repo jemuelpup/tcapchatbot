@@ -1,17 +1,22 @@
 <div class="col-md-6">
 	<div class="chatbot">
 		<label><strong>Chatbot Conversation</strong></label>
-		<app-chatbox>
+		<app-chatbox class="chatbox">
 			<app-message
 			*ngFor="let m of messages"
 			[message]="m">
+				<p>{{m.message}}</p>
 				<ul 
 				class="choices" *ngIf="m.choices?.length">
 					<li *ngFor="let c of m.choices;" (click)="selectInChoice(c)">{{l}} {{c.choice}}</li>
 					<li (click)="skip()">(Skip question)</li>
 				</ul>
 			</app-message>
+			<div class="chatbot-loader" [class.show]="loadingResponce">
+				<p><img src="assets/gifs/loaderwhite.gif" alt=""></p>
+			</div>
 		</app-chatbox>
+		
 		<div class="input-group mb-3">
 		  <input 
 		  (keyup.enter)="talkToChatbot(testing.value);testing.value=''" 

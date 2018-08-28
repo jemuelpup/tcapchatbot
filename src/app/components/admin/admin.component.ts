@@ -206,7 +206,10 @@ export class AdminComponent implements OnInit {
 	    	this.allowAnswerGeneration = true;
 	      this.getUserQuestion(q);
 	      this.relatedQuestions.push(q);
-	      this.questionKeywords = r.keywordArray;
+        for (var i = 0; i < r.keywordArray.length; i++) {
+          this.questionKeywords[i].id = r.keywordArray[i];
+        }
+	      
 	      this.toast.success("Set the answer to the question","Question Saved");
       }
     });
