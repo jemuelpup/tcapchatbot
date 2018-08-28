@@ -12,7 +12,7 @@
 					<li (click)="skip()">(Skip question)</li>
 				</ul>
 			</app-message>
-			<div class="chatbot-loader" [class.show]="loadingResponce">
+			<div class="chatbot-loader" [class.hide]="!loadingResponce">
 				<p><img src="assets/gifs/loaderwhite.gif" alt=""></p>
 			</div>
 		</app-chatbox>
