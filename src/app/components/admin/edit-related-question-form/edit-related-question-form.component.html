@@ -1,0 +1,30 @@
+<div class="modal-header">
+	<h4 class="modal-title pull-left">Edit Question Form</h4>
+	<button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+<div class="modal-body">
+	<form class="question-form lifted-container" #questionForm="ngForm" (ngSubmit)="saveEdits()">
+		<div class="form-group">
+			<label for="topic"><strong>User question</strong></label>
+			<input #questionInput class="form-control" [(ngModel)]="questionData.question" type="text" name="userQuestion" id="userQuestions" required>
+		</div>
+		<div class="form-group">
+			<label for="subject"><strong>Subject</strong></label>
+			<input #subjectInput class="form-control" [(ngModel)]="questionData.subject" type="text" name="questionSubject" id="questionSubject" required>
+		</div>
+		<div class="keywordsarea">
+			<p><strong class="mr0_5rem">Keywords:</strong> <span (click)="removeKeyword(i,kw)" *ngFor="let kw of questionData.keywords index as i">{{kw.keyword}}</span></p>
+		</div>
+		<div class="input-group mb1rem">
+			<div class="form-group mb0">
+				<input class="form-control" [(ngModel)]="keyword" type="text" name="keyword" id="keywords" placeholder="keywords">
+			</div>
+			<div class="input-group-append">
+				<button type="button" class="btn btn-primary" (click)="addKeyword(keyword);">Add Keyword</button>
+			</div>
+		</div>
+		<button type="submit" class="btn btn-primary" [disabled]="!questionForm.valid">Save Edits</button>
+	</form>
+</div>

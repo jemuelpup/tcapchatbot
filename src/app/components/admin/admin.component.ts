@@ -12,6 +12,7 @@ import { Observable } from "rxjs";
 
 import { LeadingQuestionFormComponent } from "../../components/admin/leading-question-form/leading-question-form.component";
 import { LeadingQuestionQuestionaireComponent } from "../../components/admin/leading-question-questionaire/leading-question-questionaire.component";
+import { EditRelatedQuestionFormComponent } from "../../components/admin/edit-related-question-form/edit-related-question-form.component";
 
 import { BackendService } from '../../services/backend.service';
 import { ObservableFunctionsService } from '../../services/observable-functions.service';
@@ -54,6 +55,8 @@ export class AdminComponent implements OnInit {
   leadingQuestionChoices: Choice[] = [];
   leadingQuestionForm;
   conclusionKeywordReference: Keyword[] = []; // this variable collects all the added keywords in the leading question
+
+
 
   constructor(
     public bs: BackendService,
@@ -153,36 +156,94 @@ export class AdminComponent implements OnInit {
     	]]
     });
   }
-  // this function sets the user question, subject and keywords
-  getRelatedQuestionData(q){
-    this.relatedQuestion = q;
-  	this.bs.processData("getQuestionDetails",{
-    	question_id: q.question_id
+  getSavedConclusion(){
+    console.log(this.conclusionKeywordReference.map(kw=>kw.id));
+    console.log(this.question.question_id);
+    this.bs.processData("getSavedAnswerInQuestion",{
+      keyword_ids: this.conclusionKeywordReference.map(kw=>kw.id),
+      question_id: this.question.question_id
     }).subscribe(r=>{
-    	this.userQuestion = q.question;
-    	console.log(r)
-      if(r){
-      	console.log("pumasok")
-        this.question = new Question(
-      		q.question_id,q.question,r.subject_id,r.subject,r.keywords
-      	);
-      	this.questionSubject = r.subject;
-        this.conclusionKeywordReference = [...r.keywords];
-      	this.questionKeywords = r.keywords;
-      	this.allowAnswerGeneration = true;
-      	console.log(r.leading_questions)
-      	this.leadingQuestions = r.leading_questions ? r.leading_questions : [];
-      	this.getRelatedSubjects(r.subject)
-        this.getSavedConclusion();
-      }
+      console.log(r);
+      this.questionAnswer = r.answer;
     });
   }
+  getReservedQuestionLeadingQuestions(){
+    console.log("Dumaan dito")
+    this.bs.processData("getLeadingQuestions",{
+      question_id: this.question.question_id
+    }).subscribe(r=>{
+      console.log(r)
+      this.leadingQuestions = r;
+      console.log(this.leadingQuestions)
+    });
+  }
+  showLeadingQuestion(){
+    if(this.leadingQuestions.map(lq=>lq.choices.length).indexOf(0)==-1){
+      this.openLeadingQuestionsModal();
+    }
+    else if(confirm("One leading question has no choice? Do you still want to continue?")){
+      this.openLeadingQuestionsModal();
+      console.log("")
+    }
+  }
+
+  openLeadingQuestionsModal(){
+    this.conclusionKeywordReference = [...this.questionKeywords];
+    console.log(this.leadingQuestions);
+    /**/
+    this.modalRef = this.modalService.show(LeadingQuestionQuestionaireComponent, {
+      initialState: {
+        leadingQuestions: this.leadingQuestions,
+        question: this.question
+      }
+    });
+    const _combine = combineLatest(
+      this.modalService.onHide
+    ).subscribe(() => this.changeDetection.markForCheck());
+    this.subscriptions.push(_combine);
+    // this is the callback when the modal is closed;
+    this.subscriptions.push(
+      this.modalService.onHide.subscribe((reason: string) => {
+        this.unsubscribe();
+        if(this.adminService.leadingQuestionCollectedKeywords.length){
+          this.adminService.leadingQuestionCollectedKeywords.forEach(c=>{
+            this.conclusionKeywordReference.push(<Keyword>{ id:c.keyword_id, keyword: c.keyword });
+          });
+          this.getSavedConclusion();
+        }
+        else{
+          this.questionAnswer = "";
+        }
+      })
+    );
+    /**/
+  }
+  // this function sets the user question, subject and keywords
+  getRelatedQuestionData(q){
+    console.log(q)
+    this.userQuestion = q.question;
+    this.questionSubject = q.subject;
+    this.questionKeywords = q.keywords.map(k=>{return {id:k.keyword_id, keyword: k.keyword}});
+    this.conclusionKeywordReference = [...this.questionKeywords];
+    this.question = new Question(
+      q.question_id,
+      q.question,
+      q.subject_id,
+      q.subject,
+      q.keywords);
+    this.getRelatedSubjects(q.subject);
+    this.getSavedConclusion();
+    this.getReservedQuestionLeadingQuestions();
+  }
+
+  
   getRelatedQuestionFromSubject(s){
     this.questionSubject=s.subject;
     this.leadingQuestions = [];
     this.bs.processData("getRelatedQuestionFromSubject",{
       subject_id: s.id
     }).subscribe(r=>{
+      console.log(r);
       this.relatedQuestions = r;
     });
   }
@@ -193,26 +254,53 @@ export class AdminComponent implements OnInit {
     	this.relatedSubjects = r;
     });
   }
-  // question, subject, questionKeywords
-  saveQuestion(q,s,kw){
-    this.toast.info("Saving question");
-    this.bs.processData("insertQuestion",{
-    	question: q,
-    	subject: s,
-    	questionKeywords: kw
-    }).subscribe(r=>{
-    	if(r){
-    		console.log(r)
-	    	this.allowAnswerGeneration = true;
-	      this.getUserQuestion(q);
-	      this.relatedQuestions.push(q);
-        for (var i = 0; i < r.keywordArray.length; i++) {
-          this.questionKeywords[i].id = r.keywordArray[i];
-        }
-	      
-	      this.toast.success("Set the answer to the question","Question Saved");
+
+  // UNDER CONSTRUCTION for testing
+  editQuestion(q){
+    console.log("Open question edit form");
+    console.log(q);
+    this.modalRef = this.modalService.show(EditRelatedQuestionFormComponent, {
+      initialState: {
+        questionData: q
       }
     });
+  }
+  // UNDER CONSTRUCTION
+  deleteQuestion(q){
+    console.log(q);
+    console.log(q.question_id);
+    if(confirm("Are you sure you want to delete this Reserved Question?")){
+      this.bs.processData("deleteReservedQuestion",{
+        question_id: q.question_id
+      }).subscribe(r=>{
+        this.toast.success("Reserved question removed");
+      });
+      // console.log("ask the user if he reall wants to delete the question"); 
+    }
+  }
+  // question, subject, questionKeywords
+  saveQuestion(q,s,kw){
+    console.log(q);
+    console.log(s);
+    console.log(kw);
+    // this.toast.info("Saving question");
+    // this.bs.processData("insertQuestion",{
+    // 	question: q,
+    // 	subject: s,
+    // 	questionKeywords: kw
+    // }).subscribe(r=>{
+    // 	if(r){
+    // 		console.log(r)
+	   //  	this.allowAnswerGeneration = true;
+	   //    this.getUserQuestion(q);
+	   //    this.relatedQuestions.push(q);
+    //     for (var i = 0; i < r.keywordArray.length; i++) {
+    //       this.questionKeywords[i].id = r.keywordArray[i];
+    //     }
+	      
+	   //    this.toast.success("Set the answer to the question","Question Saved");
+    //   }
+    // });
   }
   // triggers when the question in the chatbox was clicked
   getUserQuestion(userQuestion){
@@ -222,6 +310,7 @@ export class AdminComponent implements OnInit {
     let kw = this.questionKeywords.map(k=>k.keyword);
     this.relatedQuestions = [];
     this.cf.getRelatedQuestions(kw).subscribe(r=>{
+      console.log(r);
     	if(r){
     		this.questionSubject = "";
 	      this.relatedQuestions = r;
@@ -334,43 +423,7 @@ export class AdminComponent implements OnInit {
     }
     /**/
   }
-  showLeadingQuestion(){
-    if(this.leadingQuestions.map(lq=>lq.choices.length).indexOf(0)==-1){
-      this.openLeadingQuestionsModal();
-    }
-    else if(confirm("One leading question has no choice? Do you still want to continue?")){
-      this.openLeadingQuestionsModal();
-      console.log("")
-    }
-  }
-  openLeadingQuestionsModal(){
-    this.conclusionKeywordReference = [...this.questionKeywords];
-    this.modalRef = this.modalService.show(LeadingQuestionQuestionaireComponent, {
-      initialState: {
-        leadingQuestions: this.leadingQuestions,
-        question: this.question
-      }
-    });
-    const _combine = combineLatest(
-      this.modalService.onHide
-    ).subscribe(() => this.changeDetection.markForCheck());
-    this.subscriptions.push(_combine);
-    // this is the callback when the modal is closed;
-    this.subscriptions.push(
-      this.modalService.onHide.subscribe((reason: string) => {
-        this.unsubscribe();
-        if(this.adminService.leadingQuestionCollectedKeywords.length){
-          this.adminService.leadingQuestionCollectedKeywords.forEach(c=>{
-            this.conclusionKeywordReference.push(<Keyword>{ id:c.keyword_id, keyword: c.keyword });
-          });
-          this.getSavedConclusion();
-        }
-        else{
-          this.questionAnswer = "";
-        }
-      })
-    );
-  }
+
   // Under construction
   saveAnswer(ans){
     if(this.question){ // means question has text.
@@ -388,15 +441,5 @@ export class AdminComponent implements OnInit {
       }
     }
   }
-  getSavedConclusion(){
-    console.log(this.conclusionKeywordReference.map(kw=>kw.id));
-    console.log(this.question.question_id);
-    this.bs.processData("getSavedAnswerInQuestion",{
-      keyword_ids: this.conclusionKeywordReference.map(kw=>kw.id),
-      question_id: this.question.question_id
-    }).subscribe(r=>{
-      console.log(r);
-      this.questionAnswer = r.answer;
-    });
-  }
+  
 }

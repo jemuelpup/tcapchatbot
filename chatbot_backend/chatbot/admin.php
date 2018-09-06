@@ -11,8 +11,75 @@ class Admin{
 
 function getRelatedQuestionFromSubject($c,$d){
 	$subject_id = $d->subject_id;
-	$sql = "SELECT id as question_id, question FROM reserved_question_tbl WHERE subject_fk = $subject_id AND active = 1";
-	print_r(hasRows($c,$sql) ? json_encode(selectQuery($c,$sql)) : "");
+	$sql = "
+	SELECT
+	rq.id as question_id, rq.question, /* reserved question */
+	k.id as keyword_id, k.keyword, /* keyword */
+	rq.subject_fk as subject_id, s.subject /* subject */
+
+	FROM
+	reserved_question_tbl rq,
+	question_keyword_tbl qk,
+	subject_tbl s,
+	keyword_tbl k
+
+	WHERE
+	rq.id = qk.question_fk AND 
+	k.id = qk.keyword_fk AND
+	s.id = rq.subject_fk AND
+	rq.active = 1 AND
+	qk.active = 1 AND
+	s.active = 1 AND 
+	k.active = 1 AND 
+	/* where bt variable */
+	s.id = $subject_id
+
+	ORDER BY rq.id
+	";
+
+	$keyword_array=[];
+	$question_id=0;
+	$subject_and_question = [];
+	$last_row = [];
+	$res = selectQuery($c,$sql);
+	if(is_array($res)){
+		foreach ($res as $r) {
+			if($question_id==0){
+				$question_id = $r['question_id'];
+			}
+			if($question_id != $res["question_id"]){
+				array_push(
+					$subject_and_question,
+					[
+					"question_id"=>$res["question_id"],
+					"question"=>$res["question"],
+					"subject_id"=>$res["subject_id"],
+					"subject"=>$res["subject"],
+					"keywords"=>$keyword_array
+					]
+				);
+				$last_row = $r;
+			}
+			array_push(
+				$keyword_array,
+				[
+					"keyword_id"=>$res["keyword_id"],
+					"keyword"=>$res["keyword"]
+				]
+			);
+		}
+		array_push(
+			$subject_and_question,
+			[
+			"question_id"=>$last_row["question_id"],
+			"question"=>$last_row["question"],
+			"subject_id"=>$last_row["subject_id"],
+			"subject"=>$last_row["subject"],
+			"keywords"=>$keyword_array
+			]
+		);
+	}
+	print_r(json_encode($subject_and_question));
 }
 
 

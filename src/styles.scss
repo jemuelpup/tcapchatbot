@@ -34,3 +34,25 @@ ol, ul {
 		cursor: pointer;
 	}
 }
+.label-with-actions-container{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	.actions{
+		display: inline;
+	}
+}
+button.poa{
+	border: 0;
+	background: none;
+	position: absolute;
+	cursor: pointer;
+	&.top-right-corner{
+		top: 0;
+		right: 0;
+	}
+	&.bottom-right-corner{
+		bottom: 0;
+		right: 0;
+	}
+}

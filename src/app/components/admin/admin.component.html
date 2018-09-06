@@ -14,7 +14,7 @@
 						<p><strong>Training data</strong></p>
 						<form class="question-form lifted-container" #questionForm="ngForm" (ngSubmit)="saveQuestion(userQuestion,questionSubject,questionKeywords)">
 							<div class="form-group">
-								<label for="topic" (click)="getSavedConclusion()"><strong>User question</strong></label>
+								<label for="topic"><strong>User question</strong></label>
 								<input #questionInput class="form-control" [(ngModel)]="userQuestion" type="text" name="userQuestion" id="userQuestions" required>
 							</div>
 							<div class="form-group">
@@ -32,7 +32,10 @@
 									<button type="button" class="btn btn-primary" (click)="addKeyword(keyword);">Add Keyword</button>
 								</div>
 							</div>
-							<button type="submit" class="btn btn-primary" [disabled]="!questionForm.valid">Save Question</button>
+							<button
+							type="submit"
+							class="btn btn-primary"
+							[disabled]="!questionForm.valid">Save Question</button>
 						</form>
 						<form class="answer-form lifted-container" #answerFrom="ngForm" (ngSubmit)="saveAnswer(questionAnswer)">
 							<div class="form-group">
@@ -55,7 +58,25 @@
 			<div class="related-questions">
 				<p><strong>Related Questions</strong></p>
 				<ul class="related-questions-list	lifted-container">
-					<li *ngFor="let q of relatedQuestions" (click)="getRelatedQuestionData(q)">{{q.question}}</li>
+					<li *ngFor="let q of relatedQuestions">
+					<p (click)="getRelatedQuestionData(q)">{{q.question}}</p>
+					<button
+					class="poa top-right-corner"
+					tooltip="Edit"
+					placement="left"
+					type="button"
+					(click)="editQuestion(q)">
+						<fa-icon icon="edit"></fa-icon>
+					</button>
+					<button
+					class="poa bottom-right-corner"
+					tooltip="Delete"
+					placement="left"
+					type="button"
+					(click)="deleteQuestion(q)">
+						<fa-icon icon="trash"></fa-icon>
+					</button>
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -63,7 +84,11 @@
 			<div class="related-subjects">
 				<p><strong>Related Subject</strong></p>
 				<ul class="related-subjects-list lifted-container">
-					<li *ngFor="let s of relatedSubjects" (click)="getRelatedQuestionFromSubject(s);">{{s.subject}}</li>
+					<li
+					*ngFor="let s of relatedSubjects"
+					(click)="getRelatedQuestionFromSubject(s);">
+					<p>{{s.subject}}</p>
+				</li>
 				</ul>
 			</div>
 		</div>
@@ -95,6 +120,3 @@
 	</div>
 	<!-- <app-leading-question-form></app-leading-question-form> -->
 </div>
-<!-- /*
-I am a hard working employee with the eagerness to learn new things in the web development. In our company, I was a researcher and front end web developer for almost 3 years and developed many japanese websites. I was also a fullstack web developer in my freelance that makes me enhance my skills. I know that I can share my skills and tallent in this company.
-*/ -->

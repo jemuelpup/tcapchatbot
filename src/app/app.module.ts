@@ -27,18 +27,22 @@ import { ClipboardModule } from 'ngx-clipboard';
 // font awesome
 
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faEllipsisV, faPaste, faTrash, faCopy, faClipboard, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV, faPaste, faTrash, faCopy, faClipboard, faTimes, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { faClone } from '@fortawesome/free-regular-svg-icons';
 import { SavedLeadingQuestionComponent } from './components/admin/saved-leading-question/saved-leading-question.component';
 import { LeadingQuestionQuestionaireComponent } from './components/admin/leading-question-questionaire/leading-question-questionaire.component';
+import { EditRelatedQuestionFormComponent } from './components/admin/edit-related-question-form/edit-related-question-form.component';
 
-library.add(faEllipsisV);
-library.add(faCopy);
-library.add(faPaste);
-library.add(faClipboard);
-library.add(faClone);
-library.add(faTrash);
-library.add(faTimes);
+library.add(
+  faEllipsisV,
+  faEdit,
+  faCopy,
+  faPaste,
+  faClipboard,
+  faClone,
+  faTrash,
+  faTimes
+);
 
 @NgModule({
   declarations: [
@@ -51,7 +55,8 @@ library.add(faTimes);
     ChatboxComponent,
     RoutingComponents,
     SavedLeadingQuestionComponent,
-    LeadingQuestionQuestionaireComponent
+    LeadingQuestionQuestionaireComponent,
+    EditRelatedQuestionFormComponent
   ],
   imports: [
     BrowserModule,
@@ -72,6 +77,10 @@ library.add(faTimes);
     {provide: LocationStrategy, useClass: HashLocationStrategy}
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ LeadingQuestionFormComponent,LeadingQuestionQuestionaireComponent ]
+  entryComponents: [
+    LeadingQuestionFormComponent,
+    LeadingQuestionQuestionaireComponent,
+    EditRelatedQuestionFormComponent
+  ]
 })
 export class AppModule { }

@@ -31,6 +31,9 @@
 		}
 	}
 }
+.edit-question{
+	color: $color-primary;
+}
 app-message:hover{
 	cursor: pointer;
 }
@@ -42,13 +45,18 @@ app-message:hover{
 .related-subjects-list,
 .related-questions-list{
 	li{
+		position: relative;
 		font-size: 14px;
 		color: $color-primary;
 		opacity: 1;
 		border-bottom: 1px solid #dedede;
-		&:hover{
-			opacity: 0.7;
-			cursor: pointer;
+		p{
+			width: 82%;
+			margin-bottom: 0;
+			&:hover{
+				opacity: 0.7;
+				cursor: pointer;
+			}
 		}
 		&:last-child{
 			border-bottom: 0;
