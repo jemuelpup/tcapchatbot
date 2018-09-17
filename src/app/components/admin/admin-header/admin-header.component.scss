@@ -1,0 +1,27 @@
+@import '../../../assets/scss/variables.scss';
+@import '../../../assets/scss/functions.scss';
+
+.header .container-fluid{
+	background-color: $color-primary;
+	color: #fff;
+	height: 60px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 2rem;
+	p,ul{
+		margin-bottom: 0;
+	}
+}
+.menu-list{
+	li{
+		position: relative;
+		button{
+			background: none;
+			border: 0;
+			color: #fff;
+			display: block;
+			cursor: pointer;
+		}
+	}
+}

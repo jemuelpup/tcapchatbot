@@ -1,0 +1,26 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">Restore deleted question</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="deleted-question">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ReservedQuestion</th>
+          <th>Subject</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let q of questions; let i = index">
+          <td>{{q.question}}</td>
+          <td>{{q.subject}}</td>
+          <td><button class="btn btn-primary" (click)="restoreQuestion(q,i)">Restore</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

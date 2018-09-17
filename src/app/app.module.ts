@@ -27,11 +27,16 @@ import { ClipboardModule } from 'ngx-clipboard';
 // font awesome
 
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faEllipsisV, faPaste, faTrash, faCopy, faClipboard, faTimes, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV, faPaste, faTrash, faCopy, faClipboard,
+  faTimes, faEdit, faHdd } from '@fortawesome/free-solid-svg-icons';
 import { faClone } from '@fortawesome/free-regular-svg-icons';
 import { SavedLeadingQuestionComponent } from './components/admin/saved-leading-question/saved-leading-question.component';
 import { LeadingQuestionQuestionaireComponent } from './components/admin/leading-question-questionaire/leading-question-questionaire.component';
 import { EditRelatedQuestionFormComponent } from './components/admin/edit-related-question-form/edit-related-question-form.component';
+import { DeletedReservedQuestionComponent } from './components/admin/deleted-reserved-question/deleted-reserved-question.component';
+import { AdminHeaderComponent } from './components/admin/admin-header/admin-header.component';
+import { EditLeadingQuestionComponent } from './components/admin/edit-leading-question/edit-leading-question.component';
+
 
 library.add(
   faEllipsisV,
@@ -41,7 +46,8 @@ library.add(
   faClipboard,
   faClone,
   faTrash,
-  faTimes
+  faTimes,
+  faHdd
 );
 
 @NgModule({
@@ -56,7 +62,10 @@ library.add(
     RoutingComponents,
     SavedLeadingQuestionComponent,
     LeadingQuestionQuestionaireComponent,
-    EditRelatedQuestionFormComponent
+    EditRelatedQuestionFormComponent,
+    DeletedReservedQuestionComponent,
+    AdminHeaderComponent,
+    EditLeadingQuestionComponent
   ],
   imports: [
     BrowserModule,
@@ -80,7 +89,9 @@ library.add(
   entryComponents: [
     LeadingQuestionFormComponent,
     LeadingQuestionQuestionaireComponent,
-    EditRelatedQuestionFormComponent
+    EditRelatedQuestionFormComponent,
+    DeletedReservedQuestionComponent,
+    EditLeadingQuestionComponent
   ]
 })
 export class AppModule { }

@@ -13,6 +13,7 @@ import { Observable } from "rxjs";
 import { LeadingQuestionFormComponent } from "../../components/admin/leading-question-form/leading-question-form.component";
 import { LeadingQuestionQuestionaireComponent } from "../../components/admin/leading-question-questionaire/leading-question-questionaire.component";
 import { EditRelatedQuestionFormComponent } from "../../components/admin/edit-related-question-form/edit-related-question-form.component";
+import { EditLeadingQuestionComponent } from '../../components/admin/edit-leading-question/edit-leading-question.component';
 
 import { BackendService } from '../../services/backend.service';
 import { ObservableFunctionsService } from '../../services/observable-functions.service';
@@ -55,7 +56,7 @@ export class AdminComponent implements OnInit {
   leadingQuestionChoices: Choice[] = [];
   leadingQuestionForm;
   conclusionKeywordReference: Keyword[] = []; // this variable collects all the added keywords in the leading question
-
+  allowAnsweringLeadingQuestion: boolean;
 
 
   constructor(
@@ -88,6 +89,7 @@ export class AdminComponent implements OnInit {
     this.allowAnswerGeneration = false;
     this.degreeOfImportance = 5;
     this.leadingQuestions = [];
+    this.allowAnsweringLeadingQuestion = false;
     // question form
     this.initializeForms();
 		// initialization
@@ -101,14 +103,18 @@ export class AdminComponent implements OnInit {
   ngAfterViewInit() {
     this.o.setInputTextDebounce(this.questionInput.nativeElement)
     .subscribe((val: string) => {
-      if(this.userQuestion!==""&&this.userQuestion.replace(/\s/g, "")!=="")
+      if(this.userQuestion!==""&&this.userQuestion.replace(/\s/g, "")!==""){
         this.getUserQuestion(this.userQuestion);
+        this.allowAnsweringLeadingQuestion = false;
+      }
       this.leadingQuestions = [];
     });
     this.o.setInputTextDebounce(this.subjectInput.nativeElement)
     .subscribe((val: string) => {
-      if(this.questionSubject!==""&&this.questionSubject.replace(/\s/g, "")!=="")
+      if(this.questionSubject!==""&&this.questionSubject.replace(/\s/g, "")!==""){
         this.getRelatedSubjects(this.questionSubject);
+        this.allowAnsweringLeadingQuestion = false;
+      }
     });
   }
 /* function for modal */
@@ -178,12 +184,17 @@ export class AdminComponent implements OnInit {
     });
   }
   showLeadingQuestion(){
-    if(this.leadingQuestions.map(lq=>lq.choices.length).indexOf(0)==-1){
-      this.openLeadingQuestionsModal();
+    if(this.allowAnsweringLeadingQuestion){
+      if(this.leadingQuestions.map(lq=>lq.choices.length).indexOf(0)==-1){
+        this.openLeadingQuestionsModal();
+      }
+      else if(confirm("One leading question has no choice? Do you still want to continue?")){
+        this.openLeadingQuestionsModal();
+        console.log("")
+      }
     }
-    else if(confirm("One leading question has no choice? Do you still want to continue?")){
-      this.openLeadingQuestionsModal();
-      console.log("")
+    else{
+      alert("Select question from related question first");
     }
   }
 
@@ -231,6 +242,7 @@ export class AdminComponent implements OnInit {
       q.subject_id,
       q.subject,
       q.keywords);
+    this.allowAnsweringLeadingQuestion = true;
     this.getRelatedSubjects(q.subject);
     this.getSavedConclusion();
     this.getReservedQuestionLeadingQuestions();
@@ -240,6 +252,7 @@ export class AdminComponent implements OnInit {
   getRelatedQuestionFromSubject(s){
     this.questionSubject=s.subject;
     this.leadingQuestions = [];
+    this.allowAnsweringLeadingQuestion = false;
     this.bs.processData("getRelatedQuestionFromSubject",{
       subject_id: s.id
     }).subscribe(r=>{
@@ -266,13 +279,14 @@ export class AdminComponent implements OnInit {
     });
   }
   // UNDER CONSTRUCTION
-  deleteQuestion(q){
+  deleteQuestion(q,i){
     console.log(q);
     console.log(q.question_id);
     if(confirm("Are you sure you want to delete this Reserved Question?")){
       this.bs.processData("deleteReservedQuestion",{
         question_id: q.question_id
       }).subscribe(r=>{
+        this.relatedQuestions.splice(i,1);
         this.toast.success("Reserved question removed");
       });
       // console.log("ask the user if he reall wants to delete the question"); 
@@ -394,6 +408,18 @@ export class AdminComponent implements OnInit {
     	this.toast.error("Select related question first","Error");
     }
   }
+  /* UNDER CONSTRUCTION */
+  editLeadingQuestion(){
+    console.log("Dumaan sa edit leading question");
+    this.modalRef = this.modalService.show( EditLeadingQuestionComponent, {
+      initialState: {
+        // insert question  id here
+      }
+    });
+  }
+  deleteLeadingQuestion(){
+    console.log("Delete leading question");
+  }
   pasteLeadingQuestionAndChoices(){
     // console.log(this.question);
     let copiedLQ = this.adminService.copiedLeadingQuestionQuestionAndChoice;
@@ -423,7 +449,6 @@ export class AdminComponent implements OnInit {
     }
     /**/
   }
-
   // Under construction
   saveAnswer(ans){
     if(this.question){ // means question has text.

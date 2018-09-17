@@ -45,6 +45,7 @@ export class EditRelatedQuestionFormComponent implements OnInit {
 	  	this.bs.processData("updateReservedQuestion",newData).subscribe(r=>{
 	    	// this.toast.success("Answer Saved");
 	      console.log(r);
+        this.modalRef.hide();
 	    });
   	}
   }

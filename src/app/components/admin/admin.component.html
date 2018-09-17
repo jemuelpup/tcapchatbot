@@ -1,3 +1,5 @@
+<app-admin-header></app-admin-header>
+<div class="container-fluid">
 <div class="admin">
 	<app-saved-leading-question></app-saved-leading-question>
 	<div class="row line-separator">
@@ -57,8 +59,8 @@
 		<div class="col-md-2">
 			<div class="related-questions">
 				<p><strong>Related Questions</strong></p>
-				<ul class="related-questions-list	lifted-container">
-					<li *ngFor="let q of relatedQuestions">
+				<ul class="related-questions-list lifted-container">
+					<li *ngFor="let q of relatedQuestions; let i = index">
 					<p (click)="getRelatedQuestionData(q)">{{q.question}}</p>
 					<button
 					class="poa top-right-corner"
@@ -73,7 +75,7 @@
 					tooltip="Delete"
 					placement="left"
 					type="button"
-					(click)="deleteQuestion(q)">
+					(click)="deleteQuestion(q,i)">
 						<fa-icon icon="trash"></fa-icon>
 					</button>
 					</li>
@@ -99,7 +101,26 @@
 					<fa-icon icon="paste"></fa-icon>
 				</button>
 				<ul class="leading-questions-list lifted-container">
-					<li *ngFor="let l of leadingQuestions" (click)="getLeadingQuestionData(l)">{{l.leading_question}}</li>
+					<li
+					*ngFor="let l of leadingQuestions">
+						<p (click)="getLeadingQuestionData(l)">{{l.leading_question}}</p>
+						<button
+						class="poa top-right-corner"
+						tooltip="Edit"
+						placement="left"
+						type="button"
+						(click)="editLeadingQuestion(q)">
+							<fa-icon icon="edit"></fa-icon>
+						</button>
+						<button
+						class="poa bottom-right-corner"
+						tooltip="Delete"
+						placement="left"
+						type="button"
+						(click)="deleteLeadingQuestion(q,i)">
+							<fa-icon icon="trash"></fa-icon>
+						</button>
+					</li>
 				</ul>
 			</div>
 			<div class="add-leading-question-form">
@@ -119,4 +140,5 @@
 		</div>
 	</div>
 	<!-- <app-leading-question-form></app-leading-question-form> -->
+</div>
 </div>

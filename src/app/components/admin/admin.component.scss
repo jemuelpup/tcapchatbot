@@ -50,6 +50,7 @@ app-message:hover{
 		color: $color-primary;
 		opacity: 1;
 		border-bottom: 1px solid #dedede;
+		cursor: pointer;
 		p{
 			width: 82%;
 			margin-bottom: 0;
@@ -61,6 +62,12 @@ app-message:hover{
 		&:last-child{
 			border-bottom: 0;
 		}
+	}
+}
+.leading-questions-list,
+.related-questions-list{
+	li{
+		min-height: 42px;
 	}
 }
 .leading-question-list-container{
