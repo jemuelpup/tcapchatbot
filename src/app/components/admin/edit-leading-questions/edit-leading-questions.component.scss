@@ -1,0 +1,27 @@
+@import '../../../assets/scss/variables.scss';
+@import '../../../assets/scss/functions.scss';
+
+
+.search-input{
+	width: 100%;
+	max-width: 400px;
+}
+.leading-question-container{
+	display: flex;
+	justify-content: space-between;
+	.leading-question-list,
+	.edit-leading-question-form{
+		width: 50%;
+	}
+}
+
+.leading-question-list{
+	li{
+		color: $color-primary;
+		cursor: pointer;
+		&:before{
+			content: "*";
+			margin-right: 10px;
+		}
+	}
+}

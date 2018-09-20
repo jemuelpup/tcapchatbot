@@ -409,10 +409,13 @@ export class AdminComponent implements OnInit {
     }
   }
   /* UNDER CONSTRUCTION */
-  editLeadingQuestion(){
+  editLeadingQuestion(lq){
+    console.log(lq);
     console.log("Dumaan sa edit leading question");
     this.modalRef = this.modalService.show( EditLeadingQuestionComponent, {
       initialState: {
+        leadingQuestionId: lq.leading_question_id,
+        leadingQuestion: lq.leading_question
         // insert question  id here
       }
     });

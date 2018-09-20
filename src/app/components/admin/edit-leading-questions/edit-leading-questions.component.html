@@ -1,11 +1,33 @@
 <div class="modal-header">
-	<h4 class="modal-title pull-left">Edit Leading Question Form</h4>
+	<h4 class="modal-title pull-left">Edit Leading Questions</h4>
 	<button type="button" class="close pull-right" aria-label="Close">
 		<span aria-hidden="true">&times;</span>
 	</button>
 </div>
 <div class="modal-body">
 	<div class="leading-question-container">
+		<div class="leading-question-list">
+			<form class="search-input">
+				<div class="input-group mb-3">
+				  <input
+					  type="text"
+					  #search
+					  class="form-control"
+					  placeholder="Search Leading question"
+					  aria-label="Leading question"
+					  aria-describedby="leading-question-input"
+				  >
+				  <div class="input-group-append">
+				    <span class="input-group-text" id="leading-question-input">Search</span>
+				  </div>
+				</div>
+			</form>
+			<ul>
+				<li
+				*ngFor="let lq of leadingQuestions"
+				(click)="getLeadingQuestionData(lq)">{{lq.question}}</li>
+			</ul>
+		</div>
 		<div class="edit-leading-question-form">
 			<form
 			[formGroup]="leadingQuestionForm"
