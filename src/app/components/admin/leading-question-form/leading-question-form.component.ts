@@ -40,13 +40,15 @@ export class LeadingQuestionFormComponent implements OnInit {
   saveChoices(){
     console.log(this.leadingQuestion);
     /**/
-    this.bs.processData("insertLeadingQuestionChoices",{
+    let data = {
       leadingQuestion: this.leadingQuestion,
       question: this.question,
       choicesToDelete: this.deleteSelectedChoices ? this.choiceIdArray : []
-    }).subscribe(r=>{
+    };
+    console.log(data);
+    this.bs.processData("insertLeadingQuestionChoices",data).subscribe(r=>{
       this.changed = true;
-      this.modalRef.hide();
+      // this.modalRef.hide();
       this.toastr.success("Leading question edit saved");
       console.log(r);
     });

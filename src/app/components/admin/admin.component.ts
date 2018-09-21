@@ -169,8 +169,9 @@ export class AdminComponent implements OnInit {
       keyword_ids: this.conclusionKeywordReference.map(kw=>kw.id),
       question_id: this.question.question_id
     }).subscribe(r=>{
+      console.log("Nasa save conclusion");
       console.log(r);
-      this.questionAnswer = r.answer;
+      this.questionAnswer = r.answer;// uncomment this later
     });
   }
   getReservedQuestionLeadingQuestions(){
@@ -297,24 +298,24 @@ export class AdminComponent implements OnInit {
     console.log(q);
     console.log(s);
     console.log(kw);
-    // this.toast.info("Saving question");
-    // this.bs.processData("insertQuestion",{
-    // 	question: q,
-    // 	subject: s,
-    // 	questionKeywords: kw
-    // }).subscribe(r=>{
-    // 	if(r){
-    // 		console.log(r)
-	   //  	this.allowAnswerGeneration = true;
-	   //    this.getUserQuestion(q);
-	   //    this.relatedQuestions.push(q);
-    //     for (var i = 0; i < r.keywordArray.length; i++) {
-    //       this.questionKeywords[i].id = r.keywordArray[i];
-    //     }
+    this.toast.info("Saving question");
+    this.bs.processData("insertQuestion",{
+    	question: q,
+    	subject: s,
+    	questionKeywords: kw
+    }).subscribe(r=>{
+    	if(r){
+    		console.log(r)
+	    	this.allowAnswerGeneration = true;
+	      this.getUserQuestion(q);
+	      this.relatedQuestions.push(q);
+        for (var i = 0; i < r.keywordArray.length; i++) {
+          this.questionKeywords[i].id = r.keywordArray[i];
+        }
 	      
-	   //    this.toast.success("Set the answer to the question","Question Saved");
-    //   }
-    // });
+	      this.toast.success("Set the answer to the question","Question Saved");
+      }
+    });
   }
   // triggers when the question in the chatbox was clicked
   getUserQuestion(userQuestion){
@@ -410,13 +411,14 @@ export class AdminComponent implements OnInit {
   }
   /* UNDER CONSTRUCTION */
   editLeadingQuestion(lq){
-    console.log(lq);
-    console.log("Dumaan sa edit leading question");
+    // console.log(lq);
+    // console.log("Dumaan sa edit leading question");
+    // console.log(this.question.question_id);
     this.modalRef = this.modalService.show( EditLeadingQuestionComponent, {
       initialState: {
+        questionId: this.question.question_id,
         leadingQuestionId: lq.leading_question_id,
         leadingQuestion: lq.leading_question
-        // insert question  id here
       }
     });
   }
@@ -458,6 +460,7 @@ export class AdminComponent implements OnInit {
       if(this.conclusionKeywordReference.length){
       	this.toast.info("Saving answer");
         let questionDetailsAndAnswer = this.question;
+        let data = 
         this.bs.processData("insertAnswerToQuestion",{
           questionDetails:this.question,
           answer: ans,

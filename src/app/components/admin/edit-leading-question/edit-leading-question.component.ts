@@ -15,8 +15,10 @@ export class EditLeadingQuestionComponent implements OnInit {
 
 	leadingQuestionForm: FormGroup;
 
+  questionId: number;
   leadingQuestionId: number;
   leadingQuestion: string;
+  
 
   constructor(
   	private fb: FormBuilder,
@@ -38,12 +40,14 @@ export class EditLeadingQuestionComponent implements OnInit {
   saveEdits(){
     console.log(this.leadingQuestionId);
     console.log(this.leadingQuestionForm.value.leadingQuestion);
-    // this.bs.processData("editLeadingQuestion",{
-    //   updatedLeadingQuestion: this.leadingQuestionForm.value.leadingQuestion,
-    //   id: this.selectedLeadingQuestion.id
-    // }).subscribe(r=>{
-    //   console.log(r);
-    // });
+    console.log(this.questionId);
+    this.bs.processData("editSavedLeadingQuestion",{
+      leadingQuestionId: this.leadingQuestionId,
+      updatedLeadingQuestion: this.leadingQuestionForm.value.leadingQuestion,
+      questionId: this.questionId 
+    }).subscribe(r=>{
+      console.log(r);
+    });
   }
 }
 

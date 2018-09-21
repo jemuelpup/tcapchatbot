@@ -205,6 +205,7 @@ export class ChatbotComponent implements OnInit {
       question_id: this.questionId
     }).subscribe(r=>{
       console.log(r)
+      /*
       console.log(r.conclusion);
       setTimeout(() => this.loadingResponce = false);
       this.messages.push(
@@ -215,7 +216,7 @@ export class ChatbotComponent implements OnInit {
           senderImg: '',
         }
       );
-      this.reset();
+      this.reset();*/
     });/**/
   }
   reset(){
